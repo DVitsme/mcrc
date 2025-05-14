@@ -1,3 +1,4 @@
+import React from 'react';
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
 
 import {
@@ -11,7 +12,6 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
@@ -30,7 +30,7 @@ interface MenuItem {
   title: string;
   url: string;
   description?: string;
-  icon?: JSX.Element;
+  icon?: React.ReactNode;
   items?: MenuItem[];
 }
 
@@ -67,32 +67,33 @@ const Navbar1 = ({
   },
   menu = [
     { title: "Home", url: "/" },
+    { title: "About", url: "/about" },
     {
-      title: "Products",
-      url: "#",
+      title: "Services",
+      url: "/services",
       items: [
         {
-          title: "Blog",
-          description: "The latest industry news, updates, and info",
+          title: "Mediation",
+          description: "Community, re-entry, family, Schools (Attendance, IEP)",
           icon: <Book className="size-5 shrink-0" />,
           url: "#",
         },
         {
-          title: "Company",
-          description: "Our mission is to innovate and empower the world",
+          title: "Facilitation",
+          description: "Group Facilitation - Holding Space for Meaningful Conversations",
           icon: <Trees className="size-5 shrink-0" />,
           url: "#",
         },
         {
-          title: "Careers",
-          description: "Browse job listing and discover our workspace",
+          title: "Restorative Justice",
+          description: "Restorative Reflections, Restorative Dialogues, Circles",
           icon: <Sunset className="size-5 shrink-0" />,
           url: "#",
         },
         {
-          title: "Support",
+          title: "Training & Education",
           description:
-            "Get in touch with our support team or visit our community forums",
+            "Helpful guides and tips that empower you!",
           icon: <Zap className="size-5 shrink-0" />,
           url: "#",
         },
@@ -260,8 +261,8 @@ const renderMenuItem = (item: MenuItem) => {
       <NavigationMenuItem key={item.title} className="text-muted-foreground">
         <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
         <NavigationMenuContent>
-          <ul className="w-80 p-3">
-            <NavigationMenuLink>
+          <div className="w-80 p-3">
+            <ul className="space-y-1">
               {item.items.map((subItem) => (
                 <li key={subItem.title}>
                   <Link
@@ -282,21 +283,22 @@ const renderMenuItem = (item: MenuItem) => {
                   </Link>
                 </li>
               ))}
-            </NavigationMenuLink>
-          </ul>
+            </ul>
+          </div>
         </NavigationMenuContent>
       </NavigationMenuItem>
     );
   }
 
   return (
-    <Link
-      key={item.title}
-      className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-accent-foreground"
-      href={item.url}
-    >
-      {item.title}
-    </Link>
+    <NavigationMenuItem key={item.title}>
+      <Link
+        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-accent-foreground"
+        href={item.url}
+      >
+        {item.title}
+      </Link>
+    </NavigationMenuItem>
   );
 };
 

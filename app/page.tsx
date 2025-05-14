@@ -1,15 +1,19 @@
-import Hero from "@/components/blocks/Hero";
-import { AboutShortStory } from "@/components/blocks/AboutShortStory";
+import { Hero } from '@/components/blocks/Hero';
+import { MagicTextBlock } from '@/components/blocks/MagicTextBlock';
+import { About } from '@/components/blocks/About';
+import { Services } from '@/components/blocks/Services';
+import { Donate } from '@/components/cta/Donate';
+import { BlogPreview } from '@/components/blocks/BlogPreview';
 
 export default function Home() {
   return (
     <main>
-      <Hero
-        title="Welcome to Our Platform"
-        subtitle="Discover amazing possibilities"
-        videoSrc="/videos/hero-background.mp4"
-      />
-      <AboutShortStory />
+      <Hero />
+      <MagicTextBlock />
+      <About />
+      <Services />
+      <Donate />
+      <BlogPreview />
     </main>
   );
 }

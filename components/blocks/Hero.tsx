@@ -1,68 +1,115 @@
-import React from 'react';
-import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { ExternalLink } from "lucide-react";
 
-const TRUST_LOGOS = [
-  '/images/logos/forbes.png',
-  '/images/logos/forbes.png',
-  '/images/logos/forbes.png',
-  '/images/logos/forbes.png',
-];
+import { cn } from "@/lib/utils";
 
-const BADGES = [
-  'Anxiety',
-  'Depression',
-  'Therapy',
-];
+import { Button, buttonVariants } from "@/components/ui/button";
 
 const Hero = () => {
   return (
-    <section className="relative h-[85vh] w-full overflow-hidden flex flex-col">
-      {/* Video Background */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
-      >
-        <source src="/videos/hero-background.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+    <section className="relative overflow-hidden py-32">
+      <div className="absolute inset-x-0 top-0 flex h-full w-full items-center justify-center opacity-100">
+        <img
+          alt="background"
+          src="https://shadcnblocks.com/images/block/patterns/square-alt-grid.svg"
+          className="opacity-90 [mask-image:radial-gradient(75%_75%_at_center,white,transparent)]"
+        />
+      </div>
+      <div className="relative z-10 container mx-auto max-w-7xl">
+        <div className="mx-auto flex max-w-5xl flex-col items-center">
+          <div className="flex flex-col items-center gap-6 text-center">
+            <div className="rounded-xl bg-background/30 p-4 shadow-sm backdrop-blur-sm">
+              <img
+                src="https://shadcnblocks.com/images/block/block-1.svg"
+                alt="logo"
+                className="h-16"
+              />
+            </div>
+            <div>
+              <h1 className="mb-6 text-2xl font-bold tracking-tight text-pretty lg:text-5xl">
+                Creating Connection Through{" "}
+                <span className="text-orange-400">Conversation</span>
+              </h1>
+              <h2 className="mb-3 text-lg font-bold tracking-tight text-pretty lg:text-3xl">
+                Support Mediation. Build Stronger Communities.
+              </h2>
+              <p className="mx-auto max-w-3xl text-muted-foreground lg:text-xl">
+                We offer free, confidential, and community-led mediation in Howard County. Whether you're facing family conflict or just want a better way to talk things through, we’re here to help — without judgment, pressure, or cost.
+              </p>
+            </div>
+            <div className="mt-6 flex justify-center gap-3">
+              <Button className="shadow-sm transition-shadow hover:shadow">
+                Request Mediation
+              </Button>
+              <Button variant="outline" className="group">
+                Learn more{" "}
+                <ExternalLink className="ml-2 h-4 transition-transform group-hover:translate-x-0.5" />
+              </Button>
+            </div>
+            <div className="mt-20 flex flex-col items-center gap-5">
+              <p className="font-medium text-muted-foreground lg:text-left">
+                Built with open-source technologies
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <a
+                  href="#"
+                  className={cn(
+                    buttonVariants({ variant: "outline" }),
+                    "group flex aspect-square h-12 items-center justify-center p-0",
+                  )}
+                >
+                  <img
+                    src="https://shadcnblocks.com/images/block/logos/shadcn-ui-icon.svg"
+                    alt="shadcn/ui logo"
+                    className="h-6 saturate-0 transition-all group-hover:saturate-100"
+                  />
+                </a>
+                <a
+                  href="#"
+                  className={cn(
+                    buttonVariants({ variant: "outline" }),
+                    "group flex aspect-square h-12 items-center justify-center p-0",
+                  )}
+                >
+                  <img
+                    src="https://shadcnblocks.com/images/block/logos/typescript-icon.svg"
+                    alt="TypeScript logo"
+                    className="h-6 saturate-0 transition-all group-hover:saturate-100"
+                  />
+                </a>
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/60 z-10" />
-
-      {/* Centered Content */}
-      <div className="relative z-20 flex flex-1 flex-col items-center justify-center text-center px-4">
-        {/* Badges */}
-        <div className="flex gap-3 mb-6 justify-center">
-          {BADGES.map((badge) => (
-            <Badge key={badge} variant="secondary" className="bg-white/20 text-white border-none">
-              {badge}
-            </Badge>
-          ))}
-        </div>
-        {/* Headline */}
-        <h1 className="text-white text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">Reclaim Your Peace, Empower Your Mind</h1>
-        {/* Subheadline */}
-        <p className="text-white text-lg md:text-2xl mb-8 max-w-2xl mx-auto drop-shadow">Discover personalized mental health support tailored to your unique needs.</p>
-        {/* CTA Button */}
-        <Button size="lg" className="px-8 py-3 rounded-full bg-green-500 text-white font-semibold text-lg shadow-lg hover:bg-green-600 transition border-none">
-          Consult Now
-        </Button>
-        {/* Trust Statement */}
-        <p className="text-white/80 text-sm mt-8 mb-2">We Have Helped Over 10,000+ People and Featured In</p>
-        {/* Trust Logos Row */}
-        <div className="flex gap-8 items-center justify-center mt-4">
-          {TRUST_LOGOS.map((src, i) => (
-            <Image key={i} src={src} alt="Trust Logo" className="h-8 w-auto grayscale opacity-80" width={32} height={32} />
-          ))}
+                <a
+                  href="#"
+                  className={cn(
+                    buttonVariants({ variant: "outline" }),
+                    "group flex aspect-square h-12 items-center justify-center p-0",
+                  )}
+                >
+                  <img
+                    src="https://shadcnblocks.com/images/block/logos/react-icon.svg"
+                    alt="React logo"
+                    className="h-6 saturate-0 transition-all group-hover:saturate-100"
+                  />
+                </a>
+                <a
+                  href="#"
+                  className={cn(
+                    buttonVariants({ variant: "outline" }),
+                    "group flex aspect-square h-12 items-center justify-center p-0",
+                  )}
+                >
+                  <img
+                    src="https://shadcnblocks.com/images/block/logos/tailwind-icon.svg"
+                    alt="Tailwind CSS logo"
+                    className="h-6 saturate-0 transition-all group-hover:saturate-100"
+                  />
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 };
 
-export default Hero; 
+export { Hero };
