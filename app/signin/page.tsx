@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Signin() {
   const [isLoading, setIsLoading] = useState(false)
@@ -112,7 +113,7 @@ export default function Signin() {
                 </div>
               </div>
               <div className="mx-auto mt-3 flex justify-center gap-1 text-sm text-muted-foreground">
-                <p>Don't have an account?</p>
+                <p>Don&apos;t have an account?</p>
                 <Link
                   href="/signup"
                   className="font-medium text-primary hover:underline"
@@ -131,10 +132,12 @@ export default function Signin() {
             </div>
           </div>
 
-          <img
+          <Image
             src="https://shadcnblocks.com/images/block/placeholder-1.svg"
             alt="placeholder"
             className="hidden h-full max-h-screen object-cover lg:block"
+            width={1000}
+            height={1000}
           />
         </div>
       </div>

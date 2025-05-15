@@ -4,7 +4,6 @@ import { supabase } from '@/lib/supabase'
 import { FcGoogle } from "react-icons/fc";
 import { AuthError } from '@supabase/supabase-js'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,9 +14,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 type UserRole = 'coordinator' | 'mediator' | 'participant';
 
 export default function Signup() {
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const [role, setRole] = useState<UserRole>('participant') // Default role
+  const [role, setRole] = useState<UserRole>('participant')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -27,72 +25,71 @@ export default function Signup() {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
     const name = formData.get('name') as string
-    // 'role' is taken from the component's state
 
     try {
-      // 1. Create the auth user.
-      // The 'data' in options will be available in the trigger's NEW.raw_user_meta_data
+      // 1. Create the auth user
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { // This data is passed to the trigger via NEW.raw_user_meta_data
+          data: {
             full_name: name,
-            role: role, // Pass the selected role
+            role,
           },
         },
       })
 
-      if (error) throw error;
+      if (error) throw error
 
-      // Profile creation is now handled by the database trigger.
-      // The explicit insert from the client is no longer needed.
+      if (data?.user) {
+        // 2. Create the profile record
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            full_name: name,
+            role,
+            is_active: true,
+            // Initialize mediator fields only if the role is mediator
+            ...(role === 'mediator' ? {
+              skills: [],
+              preferred_case_types: [],
+              languages_spoken: ['English'],
+              is_available_for_new_cases: true
+            } : {})
+          })
 
-      // if (data?.user) {
-      //   // THIS ENTIRE BLOCK IS REMOVED:
-      //   // const { error: profileError } = await supabase
-      //   //   .from('profiles')
-      //   //   .insert({ /* ... */ });
-      //   // if (profileError) throw profileError;
-      // }
+        if (profileError) {
+          console.error('Profile creation failed:', profileError)
+          throw profileError
+        }
+      }
 
-      // alert('Check your email for the confirmation link! Your profile will be set up.')
-      router.push('/dashboard')
+      alert('Check your email for the confirmation link!')
     } catch (error) {
-      const authError = error as AuthError // Type assertion
+      const authError = error as AuthError
       alert(authError.message)
     } finally {
       setIsLoading(false)
     }
   }
 
-  // ... (handleGoogleSignUp and JSX remain the same) ...
   const handleGoogleSignUp = async () => {
-    // For Google Sign Up, if you need to set a role, you'll typically do it
-    // after the first login or have a default role set by the trigger
-    // if raw_user_meta_data.role is not present.
-    // The trigger above will need to gracefully handle if 'role' is not in raw_user_meta_data
-    // or you might need a separate step for role selection for OAuth users.
-    // For now, the SQL trigger assumes 'role' is in raw_user_meta_data.
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
-          // You could try to pass role in query params for redirectTo
-          // or handle role selection post-first-login for OAuth.
-          // For simplicity, the trigger will use the role from metadata if present.
+          redirectTo: `${window.location.origin}/dashboard`
         }
       })
       if (error) throw error
     } catch (error) {
-      const authError = error as AuthError // Type assertion
+      const authError = error as AuthError
       alert(authError.message)
     }
   }
 
   return (
-    // ... your JSX ...
     <section className="py-32">
       <div className="container mx-auto max-w-7xl">
         <div className="grid lg:grid-cols-2">
@@ -101,8 +98,7 @@ export default function Signup() {
               <div className="ite flex flex-col pb-6">
                 <p className="mb-2 text-3xl font-bold">Signup</p>
                 <p className="text-muted-foreground">
-                  {/* Start your 30-day free trial. */}
-                  Create your MCRC account.
+                  Start your 30-day free trial.
                 </p>
               </div>
               <div className="w-full rounded-md bg-background">
