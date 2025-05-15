@@ -145,7 +145,7 @@ const Navbar1 = ({
     { name: "Sitemap", url: "#" },
   ],
   auth = {
-    login: { text: "Log in", url: "/dashboard" },
+    login: { text: "Log in", url: "/signin" },
     signup: { text: "Sign up", url: "/signup" },
   },
 }: Navbar1Props) => {

@@ -23,6 +23,95 @@ const CoreValues = [
   }
 ]
 
+const CardData = [
+  {
+    id: "person-1",
+    name: "Tammatha O’Brien",
+    role: "Vice President ",
+    description:
+      "Elig doloremque mollitia fugiat omnis! Porro facilis quo animi consequatur. Explicabo.",
+    avatar: "https://shadcnblocks.com/images/block/avatar-1.webp",
+  },
+  {
+    id: "person-2",
+    name: "Derek Robertson",
+    role: "Vice President ",
+    description: "Elig doloremque mollitia fugiat omnis!",
+    avatar: "https://shadcnblocks.com/images/block/avatar-2.webp",
+  },
+  {
+    id: "person-3",
+    name: "Alec Taylor",
+    role: "Treasure",
+    description:
+      "Elig doloremque mollitia fugiat omnis! Porro facilis quo animi consequatur. Explicabo.",
+    avatar: "https://shadcnblocks.com/images/block/avatar-3.webp",
+  },
+  {
+    id: "person-4",
+    name: "Susan Bottomley",
+    role: "Secretary",
+    description: "Elig doloremque mollitia fugiat omnis!",
+    avatar: "https://shadcnblocks.com/images/block/avatar-4.webp",
+  },
+  {
+    id: "person-5",
+    name: "Robert Duru",
+    role: "Board Member",
+    description:
+      "Elig doloremque mollitia fugiat omnis! Porro facilis quo animi consequatur. Explicabo.",
+    avatar: "https://shadcnblocks.com/images/block/avatar-5.webp",
+  },
+  {
+    id: "person-6",
+    name: "Jazmyn Padmore",
+    role: "Board Member",
+    description:
+      "Elig doloremque mollitia fugiat omnis! Porro facilis quo animi consequatur. Explicabo.",
+    avatar: "https://shadcnblocks.com/images/block/avatar-6.webp",
+  },
+  {
+    id: "person-7",
+    name: "Jane Porter",
+    role: "Board Member",
+    description:
+      "Elig doloremque mollitia fugiat omnis! Porro facilis quo animi consequatur. Explicabo.",
+    avatar: "https://shadcnblocks.com/images/block/avatar-7.webp",
+  },
+  {
+    id: "person-8",
+    name: "Tamara Saunders",
+    role: "Board Member",
+    description:
+      "Elig doloremque mollitia fugiat omnis! Porro facilis quo animi consequatur. Explicabo.",
+    avatar: "https://shadcnblocks.com/images/block/avatar-8.webp",
+  },
+  {
+    id: "person-9",
+    name: "Kimberly Pfeifer",
+    role: "Board Member",
+    description:
+      "Elig doloremque mollitia fugiat omnis! Porro facilis quo animi consequatur. Explicabo.",
+    avatar: "https://shadcnblocks.com/images/block/avatar-8.webp",
+  },
+  {
+    id: "person-10",
+    name: "Roxie Tossie",
+    role: "Board Member",
+    description:
+      "Elig doloremque mollitia fugiat omnis! Porro facilis quo animi consequatur. Explicabo.",
+    avatar: "https://shadcnblocks.com/images/block/avatar-8.webp",
+  },
+  {
+    id: "person-11",
+    name: "Roger Meade",
+    role: "Board Member",
+    description:
+      "Elig doloremque mollitia fugiat omnis! Porro facilis quo animi consequatur. Explicabo.",
+    avatar: "https://shadcnblocks.com/images/block/avatar-8.webp",
+  },
+];
+
 const About = () => {
   return (
     <section className="py-32">
@@ -65,8 +154,8 @@ const About = () => {
         <FAQ
           heading="MCRC Commitment to the The Nine Hallmarks of Community Mediation"
         />
-        <GridImageCards />
-        {/* Left to do: Update board names and partners, text after our history, add in coalition data */}
+        <GridImageCards CardData={CardData} />
+        {/* Left to do: Update board names (cindy and dennis are both gone) and partners, text after our history, add in coalition data */}
       </div>
     </section>
   );
