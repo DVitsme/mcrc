@@ -10,10 +10,12 @@ export default function Home() {
     <main>
       <Hero />
       <MagicTextBlock />
-      <About />
-      <Services />
-      <Donate />
-      <BlogPreview />
+      <div className="px-8">
+        <About />
+        <Services />
+        <Donate />
+        <BlogPreview />
+      </div>
     </main>
   );
 }

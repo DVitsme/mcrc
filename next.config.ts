@@ -10,6 +10,15 @@ const nextConfig: NextConfig = {
       {
         hostname: "images.unsplash.com",
       },
+      {
+        hostname: "plus.unsplash.com",
+      },
+      {
+        hostname: "source.unsplash.com",
+      },
+      {
+        hostname: "images.pexels.com",
+      },
     ],
   },
 };

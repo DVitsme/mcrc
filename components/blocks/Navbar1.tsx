@@ -170,7 +170,7 @@ const Navbar1 = ({
   const [userName, setUserName] = useState<string>('');
   const { user } = useAuth();
   const router = useRouter();
-
+  console.log('Navbar1user', user);
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
