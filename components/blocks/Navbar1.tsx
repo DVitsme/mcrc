@@ -1,8 +1,8 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import { Book, Menu, Sunset, Trees, Zap, User } from "lucide-react";
-import { supabase } from '@/lib/supabase';
-import { User as SupabaseUser } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
+import { useAuth } from '@/lib/auth-context';
 
 import {
   Accordion,
@@ -34,6 +34,7 @@ import {
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
 
 interface MenuItem {
   title: string;
@@ -166,62 +167,66 @@ const Navbar1 = ({
     signup: { text: "Sign up", url: "/signup" },
   },
 }: Navbar1Props) => {
-  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [userName, setUserName] = useState<string>('');
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => {
+          const cookie = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith(`${name}=`))
+          return cookie ? cookie.split('=')[1] : undefined
+        },
+        set: (name, value, options) => {
+          document.cookie = `${name}=${value}; path=${options.path || '/'}; max-age=${options.maxAge || 3600}`
+        },
+        remove: (name, options) => {
+          document.cookie = `${name}=; path=${options.path || '/'}; max-age=0`
+        }
+      }
+    }
+  )
 
   useEffect(() => {
-    // Get current auth user
-    const fetchUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (data?.user) {
-        setUser(data.user);
+    const fetchUserName = async () => {
+      if (!user) {
+        setUserName('');
+        return;
+      }
 
-        // Get user's profile data to access full_name
+      try {
         const { data: profileData } = await supabase
           .from('profiles')
           .select('full_name')
-          .eq('id', data.user.id)
+          .eq('id', user.id)
           .single();
 
         if (profileData?.full_name) {
           setUserName(profileData.full_name);
         }
+      } catch (error) {
+        console.error('Error fetching user name:', error);
       }
     };
 
-    fetchUser();
-
-    // Set up auth state listener
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (session?.user) {
-          setUser(session.user);
-
-          // Get user profile data
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('full_name')
-            .eq('id', session.user.id)
-            .single();
-
-          if (profileData?.full_name) {
-            setUserName(profileData.full_name);
-          }
-        } else {
-          setUser(null);
-          setUserName('');
-        }
-      }
-    );
-
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
-  }, []);
+    fetchUserName();
+  }, [user]);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
+
   return (
     <section className="py-4">
       <div className="container mx-auto">
