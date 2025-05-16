@@ -1,5 +1,8 @@
-import React from 'react';
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+'use client'
+import React, { useEffect, useState } from 'react';
+import { Book, Menu, Sunset, Trees, Zap, User } from "lucide-react";
+import { supabase } from '@/lib/supabase';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 
 import {
   Accordion,
@@ -22,6 +25,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -80,7 +89,7 @@ const Navbar1 = ({
         },
         {
           title: "Facilitation",
-          description: "Group Facilitation - Holding Space for Meaningful Conversations",
+          description: "Group Facilitation - Holding Space for Meaningful Conversations",
           icon: <Trees className="size-5 shrink-0" />,
           url: "#",
         },
@@ -104,25 +113,25 @@ const Navbar1 = ({
       url: "#",
       items: [
         {
-          title: "Help Center",
+          title: "Forms and Files",
           description: "Get all the answers you need right here",
           icon: <Zap className="size-5 shrink-0" />,
           url: "#",
         },
         {
-          title: "Contact Us",
+          title: "Volunteer",
           description: "We are here to help you with any questions you have",
           icon: <Sunset className="size-5 shrink-0" />,
           url: "#",
         },
         {
-          title: "Status",
+          title: "Donate",
           description: "Check the current status of our services and APIs",
           icon: <Trees className="size-5 shrink-0" />,
           url: "#",
         },
         {
-          title: "Terms of Service",
+          title: "Guides",
           description: "Our terms and conditions for using our services",
           icon: <Book className="size-5 shrink-0" />,
           url: "#",
@@ -130,12 +139,20 @@ const Navbar1 = ({
       ],
     },
     {
-      title: "Pricing",
-      url: "#",
+      title: "Events",
+      url: "/events",
     },
     {
       title: "Blog",
-      url: "#",
+      url: "/blog",
+    },
+    {
+      title: "Contact",
+      url: "/contact",
+    },
+    {
+      title: "Checker",
+      url: "/sessionChecker",
     },
   ],
   mobileExtraLinks = [
@@ -149,6 +166,62 @@ const Navbar1 = ({
     signup: { text: "Sign up", url: "/signup" },
   },
 }: Navbar1Props) => {
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [userName, setUserName] = useState<string>('');
+
+  useEffect(() => {
+    // Get current auth user
+    const fetchUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data?.user) {
+        setUser(data.user);
+
+        // Get user's profile data to access full_name
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profileData?.full_name) {
+          setUserName(profileData.full_name);
+        }
+      }
+    };
+
+    fetchUser();
+
+    // Set up auth state listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          setUser(session.user);
+
+          // Get user profile data
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profileData?.full_name) {
+            setUserName(profileData.full_name);
+          }
+        } else {
+          setUser(null);
+          setUserName('');
+        }
+      }
+    );
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
   return (
     <section className="py-4">
       <div className="container mx-auto">
@@ -173,12 +246,43 @@ const Navbar1 = ({
             </div>
           </div>
           <div className="flex gap-2">
-            <Button asChild variant="outline" size="sm">
-              <Link href={auth.login.url}>{auth.login.text}</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href={auth.signup.url}>{auth.signup.text}</Link>
-            </Button>
+            {user ? (
+              <>
+                <div className="flex items-center gap-3">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                        <User className="size-4" />
+                        <span>{userName || 'User'}</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem asChild>
+                        <Link href="/profile">Profile</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/settings">Settings</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleSignOut}>
+                        Sign out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Button asChild size="sm">
+                    <Link href="/dashboard">To Dashboard</Link>
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={auth.login.url}>{auth.login.text}</Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link href={auth.signup.url}>{auth.signup.text}</Link>
+                </Button>
+              </>
+            )}
           </div>
         </nav>
         <div className="block lg:hidden">
@@ -238,12 +342,29 @@ const Navbar1 = ({
                     </div>
                   </div>
                   <div className="flex flex-col gap-3">
-                    <Button asChild variant="outline">
-                      <Link href={auth.login.url}>{auth.login.text}</Link>
-                    </Button>
-                    <Button asChild>
-                      <Link href={auth.signup.url}>{auth.signup.text}</Link>
-                    </Button>
+                    {user ? (
+                      <>
+                        <div className="flex items-center gap-2 py-2">
+                          <User className="size-5" />
+                          <span className="font-medium">{userName || 'User'}</span>
+                        </div>
+                        <Button asChild>
+                          <Link href="/dashboard">To Dashboard</Link>
+                        </Button>
+                        <Button variant="outline" onClick={handleSignOut}>
+                          Sign out
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button asChild variant="outline">
+                          <Link href={auth.login.url}>{auth.login.text}</Link>
+                        </Button>
+                        <Button asChild>
+                          <Link href={auth.signup.url}>{auth.signup.text}</Link>
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
               </SheetContent>

@@ -1,7 +1,7 @@
 'use client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { createBrowserClient } from '@supabase/ssr'
 import { FcGoogle } from "react-icons/fc";
 import { AuthError } from '@supabase/supabase-js'
 
@@ -15,48 +15,90 @@ export default function Signin() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectPath = searchParams.get('redirect') || '/dashboard'
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => {
+          const cookie = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith(`${name}=`))
+          return cookie ? cookie.split('=')[1] : undefined
+        },
+        set: (name, value, options) => {
+          document.cookie = `${name}=${value}; path=${options.path || '/'}; max-age=${options.maxAge || 3600}`
+        },
+        remove: (name, options) => {
+          document.cookie = `${name}=; path=${options.path || '/'}; max-age=0`
+        }
+      }
+    }
+  )
+
+  // Check if already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        console.log('Signin.tsx useEffect: Already has session, redirecting to', redirectPath);
+        router.push(redirectPath);
+      }
+    };
+    checkSession();
+  }, [redirectPath, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError(null)
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
 
-    const formData = new FormData(e.currentTarget)
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
-      })
+      });
 
-      if (error) throw error
+      if (error) throw error;
 
-      // Redirect to dashboard on successful login
-      router.push('/dashboard')
-    } catch (error) {
-      const authError = error as AuthError
-      setError(authError.message)
+      console.log('Signin.tsx: Successfully signed in:', data);
+      router.push(redirectPath);
+
+    } catch (error: unknown) {
+      if (error instanceof AuthError) {
+        setError(error.message || 'An unexpected error occurred');
+      } else {
+        setError('An unexpected error occurred');
+      }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleGoogleSignIn = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(redirectPath)}`
         }
-      })
-      if (error) throw error
-    } catch (error) {
-      const authError = error as AuthError
-      setError(authError.message)
+      });
+      if (error) throw error;
+    } catch (error: unknown) {
+      if (error instanceof AuthError) {
+        setError(error.message);
+      } else {
+        setError('An unexpected error occurred');
+      }
     }
-  }
+  };
 
   return (
     <section className="py-32">
