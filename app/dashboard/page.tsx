@@ -1,12 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createBrowserClient } from '@supabase/ssr'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { LogOut, User, Users, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/lib/auth-context'
 
 interface Profile {
   id: string
@@ -24,34 +25,36 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
+  const { user } = useAuth()
   const router = useRouter()
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => {
+          const cookie = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith(`${name}=`))
+          return cookie ? cookie.split('=')[1] : undefined
+        },
+        set: (name, value, options) => {
+          document.cookie = `${name}=${value}; path=${options.path || '/'}; max-age=${options.maxAge || 3600}`
+        },
+        remove: (name, options) => {
+          document.cookie = `${name}=; path=${options.path || '/'}; max-age=0`
+        }
+      }
+    }
+  )
 
   useEffect(() => {
     let isMounted = true
 
     const fetchProfile = async () => {
       try {
-        console.log('Dashboard: Fetching user data...')
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-
-        if (sessionError) {
-          console.error('Dashboard: Session error:', sessionError.message)
-          if (isMounted) {
-            setError(sessionError.message)
-            setLoading(false)
-          }
-          return
-        }
-
-        console.log('Dashboard: Session state:', {
-          hasSession: !!session,
-          userId: session?.user?.id,
-          userEmail: session?.user?.email,
-          expiresAt: session?.expires_at
-        })
-
-        if (!session?.user) {
+        if (!user) {
           console.log('Dashboard: No authenticated user found')
           if (isMounted) {
             setError('Not authenticated')
@@ -64,7 +67,7 @@ export default function Dashboard() {
         const { data, error: profileError } = await supabase
           .from('profiles')
           .select('*')
-          .eq('id', session.user.id)
+          .eq('id', user.id)
           .single()
 
         if (profileError) {
@@ -95,11 +98,17 @@ export default function Dashboard() {
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [user])
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/');
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+      router.push('/')
+    } catch (error) {
+      console.error('Error signing out:', error)
+      setError('Error signing out')
+    }
   }
 
   if (loading) {
@@ -251,12 +260,14 @@ export default function Dashboard() {
                   <Calendar className="mr-2 h-5 w-5" />
                   Availability
                 </CardTitle>
-                <CardDescription>Manage your schedule</CardDescription>
+                <CardDescription>Your schedule and availability</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-6">
-                  <p className="mb-4">Set your unavailable dates to manage your schedule</p>
-                  <Button variant="outline" className="w-full">Manage Availability</Button>
+                <div className="space-y-4">
+                  <div>
+                    <div className="text-sm font-medium text-muted-foreground">Status</div>
+                    <div>{profile.is_available_for_new_cases ? 'Available' : 'Not Available'}</div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
