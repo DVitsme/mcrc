@@ -71,7 +71,7 @@ interface Navbar1Props {
 const Navbar1 = ({
   logo = {
     url: "/",
-    src: "https://www.shadcnblocks.com/images/block/block-1.svg",
+    src: "/images/logos/mcrc-logo.png",
     alt: "logo",
     title: "MCRC",
   },
@@ -86,26 +86,26 @@ const Navbar1 = ({
           title: "Mediation",
           description: "Community, re-entry, family, Schools (Attendance, IEP)",
           icon: <Book className="size-5 shrink-0" />,
-          url: "#",
+          url: "/services/mediation",
         },
         {
           title: "Facilitation",
           description: "Group Facilitation - Holding Space for Meaningful Conversations",
           icon: <Trees className="size-5 shrink-0" />,
-          url: "#",
+          url: "/services/facilitation",
         },
         {
           title: "Restorative Justice",
           description: "Restorative Reflections, Restorative Dialogues, Circles",
           icon: <Sunset className="size-5 shrink-0" />,
-          url: "#",
+          url: "/services/restorative-justice",
         },
         {
           title: "Training & Education",
           description:
             "Helpful guides and tips that empower you!",
           icon: <Zap className="size-5 shrink-0" />,
-          url: "#",
+          url: "/services/training",
         },
       ],
     },
@@ -115,27 +115,27 @@ const Navbar1 = ({
       items: [
         {
           title: "Forms and Files",
-          description: "Get all the answers you need right here",
+          description: "All the things you need to fill out before you get started.",
           icon: <Zap className="size-5 shrink-0" />,
-          url: "#",
+          url: "/resources/forms-and-files",
         },
         {
           title: "Volunteer",
-          description: "We are here to help you with any questions you have",
+          description: "We are always looking for talented people. Join our team!",
           icon: <Sunset className="size-5 shrink-0" />,
-          url: "#",
+          url: "/resources/volunteer",
         },
         {
           title: "Donate",
-          description: "Check the current status of our services and APIs",
+          description: "Join our Giving Circle and help us service Howard County :)",
           icon: <Trees className="size-5 shrink-0" />,
-          url: "#",
+          url: "/resources/donate",
         },
         {
           title: "Guides",
-          description: "Our terms and conditions for using our services",
+          description: "Step by step guides to help you through the process.",
           icon: <Book className="size-5 shrink-0" />,
-          url: "#",
+          url: "/resources/guides",
         },
       ],
     },
@@ -150,10 +150,6 @@ const Navbar1 = ({
     {
       title: "Contact",
       url: "/contact",
-    },
-    {
-      title: "Checker",
-      url: "/sessionChecker",
     },
   ],
   mobileExtraLinks = [

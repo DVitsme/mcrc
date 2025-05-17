@@ -1,43 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
+import { getAllPublishedPosts } from "@/lib/blog";
+import { formatDate } from "@/lib/utils";
 
-const posts = [
-  {
-    id: "post-1",
-    title: "Duis sem sem, gravida vel porttitor eu, volutpat ut arcu",
-    summary:
-      "Pellentesque eget quam ligula. Sed felis ante, consequat nec ultrices ut, ornare quis metus. Vivamus sit amet tortor vel enim sollicitudin hendrerit.",
-    label: "Ut varius dolor turpis",
-    author: "Jane Doe",
-    published: "1 Jan 2024",
-    href: "#",
-    image: "https://shadcnblocks.com/images/block/placeholder-dark-1.svg",
-  },
-  {
-    id: "post-2",
-    title: "Duis sem sem, gravida vel porttitor eu, volutpat ut arcu",
-    summary:
-      "Pellentesque eget quam ligula. Sed felis ante, consequat nec ultrices ut, ornare quis metus. Vivamus sit amet tortor vel enim sollicitudin hendrerit.",
-    label: "Ut varius dolor turpis",
-    author: "Jane Doe",
-    published: "1 Jan 2024",
-    href: "#",
-    image: "https://shadcnblocks.com/images/block/placeholder-dark-1.svg",
-  },
-  {
-    id: "post-3",
-    title: "Duis sem sem, gravida vel porttitor eu, volutpat ut arcu",
-    summary:
-      "Pellentesque eget quam ligula. Sed felis ante, consequat nec ultrices ut, ornare quis metus. Vivamus sit amet tortor vel enim sollicitudin hendrerit.",
-    label: "Ut varius dolor turpis",
-    author: "Jane Doe",
-    published: "1 Jan 2024",
-    href: "#",
-    image: "https://shadcnblocks.com/images/block/placeholder-dark-1.svg",
-  },
-];
+async function BlogPreview() {
+  const posts = await getAllPublishedPosts();
 
-const BlogPreview = () => {
   return (
     <section className="py-32">
       <div className="container mx-auto max-w-7xl">
@@ -45,48 +15,58 @@ const BlogPreview = () => {
           <div className="flex items-start justify-between gap-8">
             <div>
               <p className="text-wider mb-4 text-sm font-medium text-muted-foreground">
-                Eyebrow
+                Latest Articles
               </p>
               <h2 className="mb-4 w-full text-4xl font-medium md:mb-5 md:text-5xl lg:mb-6 lg:text-6xl">
                 Blog
               </h2>
             </div>
-            <Button className="hidden md:block">View all posts</Button>
+            <Button asChild className="hidden md:block">
+              <Link href="/blog">View all posts</Link>
+            </Button>
           </div>
-          <p>Duis sem sem, gravida vel porttitor eu, volutpat ut arcu</p>
+          <p>Stay updated with our latest insights and articles</p>
         </div>
         <div className="grid gap-x-4 gap-y-8 md:grid-cols-3 lg:gap-x-6 lg:gap-y-12">
-          {posts.map((post) => (
-            <a key={post.id} href={post.href} className="group flex flex-col">
+          {posts.slice(0, 3).map((post) => (
+            <Link key={post.id} href={`/blog/${post.slug}`} className="group flex flex-col">
               <div className="mb-4 flex overflow-clip rounded-xl md:mb-5">
                 <div className="transition duration-300 group-hover:scale-105">
-                  <img
-                    src={post.image}
+                  <Image
+                    src={post.featured_image_url || '/images/blog-placeholder.jpg'}
                     alt={post.title}
+                    width={600}
+                    height={400}
                     className="aspect-[3/2] h-full w-full object-cover object-center"
                   />
                 </div>
               </div>
 
               <div>
-                <Badge>{post.label}</Badge>
+                {post.tags && post.tags.length > 0 && (
+                  <Badge>{post.tags[0].name}</Badge>
+                )}
               </div>
               <div className="mb-2 line-clamp-3 pt-4 text-lg font-medium break-words md:mb-3 md:pt-4 md:text-2xl lg:pt-4 lg:text-3xl">
                 {post.title}
               </div>
               <div className="mb-4 line-clamp-2 text-sm text-muted-foreground md:mb-5 md:text-base">
-                {post.summary}
+                {post.excerpt || post.meta_description}
               </div>
-
-            </a>
+              <div className="mt-auto text-sm text-muted-foreground">
+                {post.published_at ? formatDate(post.published_at) : formatDate(post.created_at)}
+              </div>
+            </Link>
           ))}
         </div>
         <div className="mt-8 flex flex-col items-center py-2 md:hidden">
-          <Button className="w-full sm:w-fit">View all posts</Button>
+          <Button asChild className="w-full sm:w-fit">
+            <Link href="/blog">View all posts</Link>
+          </Button>
         </div>
       </div>
     </section>
   );
-};
+}
 
 export { BlogPreview };

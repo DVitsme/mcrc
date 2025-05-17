@@ -1,61 +1,42 @@
-import { Skeleton } from '@/components/ui/skeleton'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function EventsLoading() {
   return (
-    <main className="container max-w-7xl mx-auto px-4 py-12">
-      <div className="text-center mb-12">
-        <Skeleton className="h-10 w-1/3 mx-auto mb-3" />
-        <Skeleton className="h-6 w-2/3 mx-auto" />
+    <section className="bg-muted/60 py-32">
+      <div className="container mx-auto max-w-7xl px-8">
+        <div className="relative mx-auto flex max-w-screen-xl flex-col gap-20 lg:flex-row">
+          <header className="top-10 flex h-fit flex-col items-center gap-5 text-center lg:sticky lg:max-w-80 lg:items-start lg:gap-8 lg:text-left">
+            <Skeleton className="h-14 w-14 rounded-full mb-2" />
+            <Skeleton className="h-10 w-48 mb-2" />
+            <Skeleton className="h-6 w-64 mb-2" />
+            <Skeleton className="h-1 w-24 mb-2" />
+            <div className="flex flex-wrap items-center justify-center gap-2 lg:flex-col lg:items-start lg:gap-2 mt-2">
+              {[...Array(3)].map((_, i) => (
+                <Skeleton key={i} className="h-8 w-20 rounded-full" />
+              ))}
+            </div>
+          </header>
+          <div className="grid gap-4 md:grid-cols-2 flex-1">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="group relative isolate h-80 rounded-lg bg-background overflow-hidden"
+              >
+                <Skeleton className="absolute inset-0 size-full rounded-lg" />
+                <div className="z-10 flex h-full flex-col justify-between p-6 relative">
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-6 w-16 rounded-full" />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Skeleton className="h-6 w-3/4" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-
-      <div className="mb-8 flex justify-center">
-        <Skeleton className="h-10 w-64" />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <EventCardSkeleton key={i} />
-        ))}
-      </div>
-    </main>
-  )
+    </section>
+  );
 }
-
-function EventCardSkeleton() {
-  return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3">
-        <div className="flex justify-between items-start">
-          <Skeleton className="h-6 w-3/4" />
-          <Skeleton className="h-5 w-20" />
-        </div>
-        <div className="mt-2">
-          <Skeleton className="h-4 w-full mt-2" />
-          <Skeleton className="h-4 w-5/6 mt-2" />
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4 flex-grow">
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-4 w-4 rounded-full" />
-          <Skeleton className="h-4 w-1/3" />
-        </div>
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-4 w-4 rounded-full" />
-          <Skeleton className="h-4 w-2/5" />
-        </div>
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-4 w-4 rounded-full" />
-          <Skeleton className="h-4 w-3/5" />
-        </div>
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-4 w-4 rounded-full" />
-          <Skeleton className="h-4 w-1/4" />
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Skeleton className="h-9 w-full" />
-      </CardFooter>
-    </Card>
-  )
-} 

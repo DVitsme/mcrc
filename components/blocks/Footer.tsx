@@ -1,31 +1,34 @@
+import Image from "next/image";
+import Link from "next/link";
 import { FaFacebook, FaLinkedin, FaXTwitter } from "react-icons/fa6";
 
 const navigation = [
   {
-    title: "Products",
+    title: "Pages",
     links: [
-      { name: "VAR", href: "#" },
-      { name: "Credit Transfers", href: "#" },
-      { name: "Credit Accounts", href: "#" },
-      { name: "Loan Origination", href: "#" },
-      { name: "Loan Purchase", href: "#" },
+      { name: "Home", href: "/" },
+      { name: "About", href: "/about" },
+      { name: "Services", href: "/services" },
+      { name: "Resources", href: "/resources" },
+      { name: "Contact", href: "/contact" },
     ],
   },
   {
-    title: "Support",
+    title: "Resources",
     links: [
-      { name: "Pricing", href: "#" },
-      { name: "FAQ", href: "#" },
-      { name: "Demo", href: "#" },
-      { name: "Contact", href: "#" },
+      { name: "Forms and Files", href: "/resources/forms-and-files" },
+      { name: "Volunteer", href: "/resources/volunteer" },
+      { name: "Donate", href: "/resources/donate" },
+      { name: "Guides", href: "/resources/guides" },
     ],
   },
   {
-    title: "Company",
+    title: "Data Usage",
     links: [
-      { name: "About", href: "#" },
-      { name: "Terms of Service", href: "#" },
-      { name: "Privacy Policy", href: "#" },
+      { name: "Terms of Service", href: "/your-data/terms-of-service" },
+      { name: "Privacy Policy", href: "/your-data/privacy-policy" },
+      { name: "Data Protection", href: "/your-data/data-protection" },
+      { name: "Cookie Policy", href: "/your-data/cookie-policy" },
     ],
   },
 ];
@@ -43,16 +46,17 @@ export const Footer = () => {
         {/* Logo and newsletter section */}
         <div className="mb-10 flex flex-col items-start justify-between gap-10 border-b pb-10 sm:mb-16 sm:pb-12 md:flex-row">
           <div className="w-full max-w-full sm:max-w-sm">
-            <a href="https://shadcnblocks.com">
-              <img
-                src="https://shadcnblocks.com/images/block/logos/shadcnblockscom-icon.svg"
-                alt="Charter logo"
-                className="mb-6 h-8 dark:invert"
+            <Link href="/" aria-label="MCRC logo">
+              <Image
+                src="/images/logos/mcrc-logo.png"
+                alt="MCRC logo"
+                className="mb-6 h-16 w-auto dark:invert"
+                width={100}
+                height={100}
               />
-            </a>
+            </Link>
             <p className="mb-8 text-base text-muted-foreground">
-              Building financial solutions for businesses and individuals around
-              the globe.
+              MCRC is a non-profit organization that seeks to improve the lives of the community.
             </p>
 
             {/* Newsletter subscription */}
@@ -79,12 +83,12 @@ export const Footer = () => {
                   <ul className="space-y-3.5">
                     {section.links.map((link) => (
                       <li key={link.name}>
-                        <a
+                        <Link
                           href={link.href}
                           className="inline-block py-1 text-muted-foreground transition-colors duration-200 hover:text-foreground active:text-primary"
                         >
                           {link.name}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -98,7 +102,7 @@ export const Footer = () => {
         <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
           <div className="order-1 mb-6 flex w-full items-center justify-center gap-6 sm:justify-start md:order-2 md:mb-0 md:w-auto">
             {socialLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 aria-label={`Visit our ${link.name} page`}
@@ -107,20 +111,20 @@ export const Footer = () => {
                 target="_blank"
               >
                 <link.icon className="h-6 w-6 sm:h-5 sm:w-5" />
-              </a>
+              </Link>
             ))}
           </div>
 
           {/* Copyright - Below on mobile, left on desktop */}
           <p className="order-2 text-center text-sm text-muted-foreground sm:text-left md:order-1">
-            © {new Date().getFullYear()} Charter. All rights reserved.{" "}
-            <a
-              href="https://shadcnblocks.com"
+            © {new Date().getFullYear()} MCRC Howard County. All rights reserved.{" "}
+            <Link
+              href="/"
               className="text-foreground underline underline-offset-4 transition-colors hover:text-primary"
               target="_blank"
             >
-              Shadcnblocks.com
-            </a>
+              MCRC Howard County
+            </Link>
           </p>
         </div>
       </div>
