@@ -3,10 +3,11 @@ import { HandHeart, UserRoundCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 const Donate = () => {
   return (
-    <section className="py-32">
+    <section className="py-16">
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col rounded-xl border lg:flex-row">
           <div className="grow px-8 py-8 lg:px-16">
@@ -20,13 +21,17 @@ const Donate = () => {
               </p>
             </div>
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <Button>Start free trial</Button>
-              <Button variant="outline">Schedule demo</Button>
+              <Link href="/resources/donate">
+                <Button>Get Started</Button>
+              </Link>
+              <Link href="/resources/volunteer">
+                <Button variant="outline">How You Can Help</Button>
+              </Link>
             </div>
           </div>
           <div className="flex grow basis-5/12 flex-col justify-between border-t lg:border-t-0 lg:border-l">
-            <a
-              href="#"
+            <Link
+              href="/resources/donate"
               className="flex h-full items-center px-9 py-6 transition-colors hover:bg-muted/50 lg:justify-center"
             >
               <div className="flex gap-4">
@@ -43,10 +48,10 @@ const Donate = () => {
                   </p>
                 </div>
               </div>
-            </a>
+            </Link>
             <Separator />
-            <a
-              href="#"
+            <Link
+              href="/resources/volunteer"
               className="flex h-full items-center px-9 py-6 transition-colors hover:bg-muted/50 lg:justify-center"
             >
               <div className="flex gap-4">
@@ -63,7 +68,7 @@ const Donate = () => {
                   </p>
                 </div>
               </div>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

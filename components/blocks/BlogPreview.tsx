@@ -9,7 +9,7 @@ async function BlogPreview() {
   const posts = await getAllPublishedPosts();
 
   return (
-    <section className="py-32">
+    <section className="py-16">
       <div className="container mx-auto max-w-7xl">
         <div className="mb-8 md:mb-14 lg:mb-16">
           <div className="flex items-start justify-between gap-8">
