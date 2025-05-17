@@ -8,6 +8,7 @@ import { Footer } from "@/components/blocks/Footer";
 
 // Import the Auth Provider
 import { AuthProvider } from "@/lib/auth-context";
+import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,6 +32,7 @@ export default function RootLayout({
         <AuthProvider>
           <Navbar1 />
           <main>{children}</main>
+          <Toaster />
           <Footer />
         </AuthProvider>
       </body>
