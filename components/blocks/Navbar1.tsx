@@ -169,23 +169,7 @@ const Navbar1 = ({
   console.log('Navbar1user', user);
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => {
-          const cookie = document.cookie
-            .split('; ')
-            .find((row) => row.startsWith(`${name}=`))
-          return cookie ? cookie.split('=')[1] : undefined
-        },
-        set: (name, value, options) => {
-          document.cookie = `${name}=${value}; path=${options.path || '/'}; max-age=${options.maxAge || 3600}`
-        },
-        remove: (name, options) => {
-          document.cookie = `${name}=; path=${options.path || '/'}; max-age=0`
-        }
-      }
-    }
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
   useEffect(() => {
