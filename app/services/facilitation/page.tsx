@@ -1,84 +1,243 @@
-import { Trees, Users, MessageSquare, Lightbulb } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+"use client";
 
-const facilitationTypes = [
-  {
-    title: "Group Facilitation",
-    description: "Expert facilitation for group discussions, meetings, and collaborative processes.",
-    icon: <Users className="size-5 shrink-0" />,
-  },
-  {
-    title: "Community Dialogues",
-    description: "Facilitated conversations that bring community members together to address important issues.",
-    icon: <MessageSquare className="size-5 shrink-0" />,
-  },
-  {
-    title: "Strategic Planning",
-    description: "Guided processes to help organizations and groups develop and implement strategic plans.",
-    icon: <Lightbulb className="size-5 shrink-0" />,
-  },
-  {
-    title: "Conflict Resolution",
-    description: "Facilitated processes to address and resolve conflicts within groups and organizations.",
-    icon: <Trees className="size-5 shrink-0" />,
-  },
-]
+import { Facebook, Lightbulb, Linkedin, Twitter } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
-export default function FacilitationPage() {
+import { cn } from "@/lib/utils";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import DynamicBreadcrumbs from "@/components/blocks/DynamicBreadcrumbs";
+import Image from "next/image";
+import ListThreeCol from "@/components/blocks/ListThreeCol";
+
+
+const listData = {
+  title: "Group facilitation can support",
+  description: "Section description",
+  items: [
+    {
+      title: "Workplaces & Organizations",
+      description: "Organizational development, strengthening team collaboration and decision-making",
+      link: "/link1"
+    },
+    {
+      title: "Community Groups",
+      description: "Addressing challenges in a structured and inclusive way",
+      link: "/link2"
+    },
+    {
+      title: "Difficult Conversations",
+      description: "Providing neutral, skilled facilitation for sensitive topics",
+      link: "/link2"
+    },
+    {
+      title: "Coalition Building & Planning",
+      description: "Supporting community-led efforts with guided dialogue",
+      link: "/link3"
+    }
+  ]
+};
+
+export default function Mediation() {
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const sectionRefs = useRef<Record<string, HTMLElement>>({});
+
+  useEffect(() => {
+    const sections = Object.keys(sectionRefs.current);
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    let observer: IntersectionObserver | null = new IntersectionObserver(
+      observerCallback,
+      {
+        root: null,
+        rootMargin: "0px",
+        threshold: 1,
+      },
+    );
+
+    sections.forEach((sectionId) => {
+      const element = sectionRefs.current[sectionId];
+      if (element) {
+        observer?.observe(element);
+      }
+    });
+
+    return () => {
+      observer?.disconnect();
+      observer = null;
+    };
+  }, []);
+
+  const addSectionRef = (id: string, ref: HTMLElement | null) => {
+    if (ref) {
+      sectionRefs.current[id] = ref;
+    }
+  };
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="mx-auto max-w-3xl">
-        <h1 className="mb-4 text-4xl font-bold tracking-tight">Facilitation Services</h1>
-        <p className="mb-8 text-lg text-muted-foreground">
-          Our facilitation services help groups have meaningful conversations, make decisions, and work together effectively.
-          We create safe spaces for dialogue and collaboration, ensuring all voices are heard.
+    <section className="py-32">
+      <div className="container mx-auto max-w-7xl px-8">
+        <DynamicBreadcrumbs />
+        <h1 className="mt-9 mb-4 max-w-3xl text-7xl font-bold md:mb-6 capitalize break-words">
+          Group Facilitation
+        </h1>
+        <p className="mb-6 max-w-xl text-lg">
+          Holding Space for Meaningful Conversations
         </p>
 
-        <div className="mb-12 grid gap-6 sm:grid-cols-2">
-          {facilitationTypes.map((type) => (
-            <Card key={type.title}>
-              <CardHeader>
-                <div className="mb-2 flex items-center gap-2">
-                  {type.icon}
-                  <CardTitle>{type.title}</CardTitle>
-                </div>
-                <CardDescription>{type.description}</CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
-        </div>
+        <div className="relative mt-12 grid max-w-screen-xl gap-14 lg:mt-14 lg:grid lg:grid-cols-12 lg:gap-6">
+          <div className="order-2 lg:order-none lg:col-span-8">
+            <div>
+              <Image
+                src="https://shadcnblocks.com/images/block/placeholder-1.svg"
+                alt="placeholder"
+                className="mt-0 mb-8 aspect-video w-full rounded-lg border object-cover"
+                width={1000}
+                height={1000}
+              />
+              <p className="text-sm text-muted-foreground">
+                In a kingdom far away, there lived a ruler who faced a peculiar
+                challenge. After much contemplation, he devised an unusual
+                solution that would change everything.
+              </p>
+            </div>
+            <section
+              id="section1"
+              ref={(ref) => addSectionRef("section1", ref)}
+              className="my-8 prose"
+            >
+              <h2>At MCRC, we believe that stronger communities are built through open, honest, and structured conversations.</h2>
+              <p className="mt-4">
+                Our group facilitation services create space for teams, organizations, and communities to work through challenges, strengthen relationships, and develop shared solutions. Whether you need support navigating internal conflicts, planning discussions, or community decision-making, our trained facilitators help guide the conversation with care, neutrality, and respect for all voices.
+              </p>
 
-        <div className="rounded-lg bg-muted p-8">
-          <h2 className="mb-4 text-2xl font-semibold">Our Facilitation Approach</h2>
-          <ul className="mb-8 space-y-4">
-            <li className="flex items-start gap-2">
-              <span className="mt-1 text-primary">•</span>
-              <span>Neutral and impartial facilitation</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-1 text-primary">•</span>
-              <span>Inclusive and participatory processes</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-1 text-primary">•</span>
-              <span>Clear communication and active listening</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-1 text-primary">•</span>
-              <span>Structured yet flexible approach</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-1 text-primary">•</span>
-              <span>Focus on achieving concrete outcomes</span>
-            </li>
-          </ul>
-          <Button asChild>
-            <Link href="/contact">Request Facilitation</Link>
-          </Button>
+              <Alert className="mt-8">
+                <Lightbulb className="h-4 w-4" />
+                <AlertTitle>We also offer Listening Sessions!</AlertTitle>
+                <AlertDescription>
+                  Intentional spaces designed for communities, workplaces, and organizations to share perspectives, process difficult topics, and build understanding. These sessions create opportunities for groups to be heard, reflect on concerns, and explore ways forward together.
+                </AlertDescription>
+              </Alert>
+            </section>
+
+            {/* Group Facilitation Services */}
+            <section
+              id="section2"
+              ref={(ref) => addSectionRef("section2", ref)}
+              className="prose mb-8"
+            >
+              <ListThreeCol listData={listData} lightBackground />
+            </section>
+
+            <section
+              id="section3"
+              ref={(ref) => addSectionRef("section3", ref)}
+              className="prose mb-8"
+            >
+              <p>
+                Our facilitators create brave spaces for dialogue, ensuring that conversations are productive, inclusive, and move toward shared understanding.
+              </p>
+            </section>
+          </div>
+          <div className="order-1 flex h-fit flex-col text-sm lg:sticky lg:top-8 lg:order-none lg:col-span-3 lg:col-start-10 lg:text-xs">
+            <div className="order-3 lg:order-none">
+              <span className="text-xs font-medium">ON THIS PAGE</span>
+              <nav className="mt-2 lg:mt-4">
+                <ul className="space-y-1">
+                  <li>
+                    <a
+                      href="#section1"
+                      className={cn(
+                        "block py-1 transition-colors duration-200",
+                        activeSection === "section1"
+                          ? "text-muted-foreground lg:text-primary"
+                          : "text-muted-foreground hover:text-primary",
+                      )}
+                    >
+                      Our Beliefs
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#section2"
+                      className={cn(
+                        "block py-1 transition-colors duration-200",
+                        activeSection === "section2"
+                          ? "text-muted-foreground lg:text-primary"
+                          : "text-muted-foreground hover:text-primary",
+                      )}
+                    >
+                      Listening Sessions
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#section3"
+                      className={cn(
+                        "block py-1 transition-colors duration-200",
+                        activeSection === "section3"
+                          ? "text-muted-foreground lg:text-primary"
+                          : "text-muted-foreground hover:text-primary",
+                      )}
+                    >
+                      Group Facilitation Services
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <Separator className="order-2 mt-8 mb-11 lg:hidden" />
+            <div className="order-1 flex flex-col gap-2 lg:order-none lg:mt-9">
+              <p className="font-medium text-muted-foreground">
+                Share Our Services:
+              </p>
+              <ul className="flex gap-2">
+                <li>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="group rounded-full"
+                  >
+                    <a href="#">
+                      <Facebook className="h-4 w-4 fill-muted-foreground text-muted-foreground transition-colors group-hover:fill-primary group-hover:text-primary" />
+                    </a>
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="group rounded-full"
+                  >
+                    <a href="#">
+                      <Linkedin className="h-4 w-4 fill-muted-foreground text-muted-foreground transition-colors group-hover:fill-primary group-hover:text-primary" />
+                    </a>
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="group rounded-full"
+                  >
+                    <a href="#">
+                      <Twitter className="h-4 w-4 fill-muted-foreground text-muted-foreground transition-colors group-hover:fill-primary group-hover:text-primary" />
+                    </a>
+                  </Button>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  )
-} 
+    </section>
+  );
+};

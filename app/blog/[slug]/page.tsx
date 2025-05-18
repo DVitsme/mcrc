@@ -1,13 +1,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, CalendarDays, Clock, User } from 'lucide-react'
+import { CalendarDays, Clock, User } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Card, CardHeader } from '@/components/ui/card'
-import { getPostBySlug, getRelatedPosts, type BlogPost } from '@/lib/blog'
+import { getPostBySlug, getRelatedPosts } from '@/lib/blog'
 import { formatDate } from '@/lib/utils'
+import DynamicBreadcrumbs from '@/components/blocks/DynamicBreadcrumbs'
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const post = await getPostBySlug(params.slug)
@@ -59,12 +60,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     <div className="container mx-auto px-4 py-12">
       {/* Back to Blog Button */}
       <div className="mb-8">
-        <Button variant="ghost" asChild className="group pl-0">
-          <Link href="/blog" className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            <span>Back to Blog</span>
-          </Link>
-        </Button>
+        <DynamicBreadcrumbs />
       </div>
 
       {/* Article Header */}
@@ -139,13 +135,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         {post.tags && post.tags.length > 0 && (
           <div className="mt-10 flex flex-wrap gap-2">
             {post.tags.map(tag => (
-              <Badge
-                key={tag.id}
-                className={`${getCategoryColor(tag.name)}`}
-                asChild
-              >
-                <Link href={`/blog?tag=${tag.slug}`}>{tag.name}</Link>
-              </Badge>
+              <Link href={`/blog?tag=${tag.slug}`} key={tag.id}>
+                <Badge
+                  className={`${getCategoryColor(tag.name)}`}
+                >
+                  {tag.name}
+                </Badge>
+              </Link>
             ))}
           </div>
         )}
