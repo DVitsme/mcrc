@@ -69,7 +69,7 @@ const EventsPreview = async () => {
                         <Avatar className="size-7 rounded-full border border-border">
                           <AvatarImage src={item.featured_image_url || '/images/event-placeholder.jpg'} />
                         </Avatar>
-                        <time className="text-xs text-muted-foreground">
+                        <time className="text-xs text-muted-foreground pb-1 border-dashed border-b border-gray-500">
                           {new Date(item.event_start_time).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                         </time>
                       </div>

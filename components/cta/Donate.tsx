@@ -8,7 +8,7 @@ import Link from "next/link";
 const Donate = () => {
   return (
     <section className="py-16">
-      <div className="container mx-auto max-w-7xl">
+      <div className="container mx-auto max-w-7xl bg-primary-foreground">
         <div className="flex flex-col rounded-xl border lg:flex-row">
           <div className="grow px-8 py-8 lg:px-16">
             <Badge variant="outline">Support Our Work</Badge>
