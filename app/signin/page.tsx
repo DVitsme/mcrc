@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { FcGoogle } from "react-icons/fc";
@@ -17,32 +17,34 @@ export default function Signin() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectPath = searchParams.get('redirect') || '/dashboard'
+  const supabaseRef = useRef<ReturnType<typeof createBrowserClient> | null>(null)
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => {
-          const cookie = document.cookie
-            .split('; ')
-            .find((row) => row.startsWith(`${name}=`))
-          return cookie ? cookie.split('=')[1] : undefined
-        },
-        set: (name, value, options) => {
-          document.cookie = `${name}=${value}; path=${options.path || '/'}; max-age=${options.maxAge || 3600}`
-        },
-        remove: (name, options) => {
-          document.cookie = `${name}=; path=${options.path || '/'}; max-age=0`
+  useEffect(() => {
+    supabaseRef.current = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get: (name) => {
+            const cookie = document.cookie
+              .split('; ')
+              .find((row) => row.startsWith(`${name}=`))
+            return cookie ? cookie.split('=')[1] : undefined
+          },
+          set: (name, value, options) => {
+            document.cookie = `${name}=${value}; path=${options.path || '/'}; max-age=${options.maxAge || 3600}`
+          },
+          remove: (name, options) => {
+            document.cookie = `${name}=; path=${options.path || '/'}; max-age=0`
+          }
         }
       }
-    }
-  )
+    )
 
-  // Check if already logged in
-  useEffect(() => {
+    // Check if already logged in
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      if (!supabaseRef.current) return
+      const { data: { session } } = await supabaseRef.current.auth.getSession();
       if (session) {
         console.log('Signin.tsx useEffect: Already has session, redirecting to', redirectPath);
         router.push(redirectPath);
@@ -53,6 +55,7 @@ export default function Signin() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!supabaseRef.current) return;
     setIsLoading(true);
     setError(null);
 
@@ -61,7 +64,7 @@ export default function Signin() {
     const password = formData.get('password') as string;
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabaseRef.current.auth.signInWithPassword({
         email,
         password,
       });
@@ -83,8 +86,9 @@ export default function Signin() {
   };
 
   const handleGoogleSignIn = async () => {
+    if (!supabaseRef.current) return;
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabaseRef.current.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(redirectPath)}`
