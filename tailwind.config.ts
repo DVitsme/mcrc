@@ -26,8 +26,7 @@ const config: Config = {
         // Tailwind's default 2xl screen is 1536px.
       },
     },
-    extend: {
-    },
+    extend: {},
   },
   plugins: [],
 }
