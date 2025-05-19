@@ -187,8 +187,15 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
+  }
+}
+
+@layer components {
+  .center-container {
+    @apply container mx-auto max-w-7xl px-8;
   }
 }
