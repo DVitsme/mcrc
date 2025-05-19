@@ -74,8 +74,8 @@ export function ContactPageClient() {
   }
 
   return (
-    <section className="py-32">
-      <div className="container mx-auto max-w-7xl px-8">
+    <section className="py-16">
+      <div className="center-container">
         <div className="flex flex-col md:flex-row justify-between">
           <div className="max-w-full md:w-1/2 mb-8">
             <h1 className="mb-3 text-xl font-medium text-muted-foreground">

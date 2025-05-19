@@ -3,7 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function EventsLoading() {
   return (
     <section className="bg-muted/60 py-32">
-      <div className="container mx-auto max-w-7xl px-8">
+      <div className="center-container">
         <div className="relative mx-auto flex max-w-screen-xl flex-col gap-20 lg:flex-row">
           <header className="top-10 flex h-fit flex-col items-center gap-5 text-center lg:sticky lg:max-w-80 lg:items-start lg:gap-8 lg:text-left">
             <Skeleton className="h-14 w-14 rounded-full mb-2" />

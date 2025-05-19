@@ -1,15 +1,16 @@
 "use client";
 
-import { Facebook, Lightbulb, Linkedin, Twitter } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { Facebook, Lightbulb, Linkedin, Twitter } from "lucide-react";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import DynamicBreadcrumbs from "@/components/blocks/DynamicBreadcrumbs";
-import Image from "next/image";
+import { PageHeader } from "@/components/blocks/PageHeader";
+
 
 export default function Mediation() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
@@ -54,15 +55,12 @@ export default function Mediation() {
     }
   };
   return (
-    <section className="py-32">
-      <div className="container mx-auto max-w-7xl px-8">
-        <DynamicBreadcrumbs />
-        <h1 className="mt-9 mb-4 max-w-3xl text-4xl font-bold md:mb-6 md:text-7xl capitalize">
-          Mediation
-        </h1>
-        <p className="mb-4 max-w-xl text-lg">
-          Conflict is part of life—it shapes our relationships, our communities, and our growth. At the Mediation and Conflict Resolution Center, we believe that conflict, when approached with care and intention, can be a pathway to healing, understanding, and transformation.
-        </p>
+    <section className="py-16">
+      <div className="center-container">
+        <PageHeader
+          title="Mediation"
+          description="Conflict is part of life—it shapes our relationships, our communities, and our growth. At the Mediation and Conflict Resolution Center, we believe that conflict, when approached with care and intention, can be a pathway to healing, understanding, and transformation."
+        />
         <p className="mb-6 max-w-xl text-lg">
           Trained, neutral mediators guide the conversation—not to take sides or make decisions for you, but to help you:
         </p>
@@ -85,7 +83,7 @@ export default function Mediation() {
           <div className="order-2 lg:order-none lg:col-span-8">
             <div>
               <Image
-                src="https://shadcnblocks.com/images/block/placeholder-1.svg"
+                src="/images/services/mediation.jpg"
                 alt="placeholder"
                 className="mt-0 mb-8 aspect-video w-full rounded-lg border object-cover"
                 width={1000}
