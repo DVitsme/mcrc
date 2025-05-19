@@ -34,9 +34,26 @@ export function EventsPageClient({ events, badges }: { events: Event[]; badges: 
       ? events
       : events.filter((event) => event.event_type_badge === selectedBadge);
 
+  /**
+   * EmptyState Component
+   * 
+   * Displays a message when no events match the current filter criteria
+   */
+  function EmptyState() {
+    return (
+      <div className="col-span-full flex flex-col items-center justify-center py-12 text-center">
+        <FileText className="mb-4 h-12 w-12 text-muted-foreground" strokeWidth={1} />
+        <h3 className="text-xl font-semibold">No events found</h3>
+        <p className="mt-2 text-muted-foreground">
+          There are no events matching your current filter. Try selecting a different category.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <section className="bg-muted/60 py-32">
-      <div className="container mx-auto max-w-7xl px-8">
+    <section className="bg-muted/60 py-16">
+      <div className="center-container">
         <div className="relative mx-auto flex max-w-screen-xl flex-col gap-20 lg:flex-row">
           {/* Left sidebar with filters */}
           <header className="top-10 flex h-fit flex-col items-center gap-5 text-center lg:sticky lg:max-w-80 lg:items-start lg:gap-8 lg:text-left">
@@ -47,11 +64,15 @@ export function EventsPageClient({ events, badges }: { events: Event[]; badges: 
             </p>
             <Separator />
             {/* Filter buttons */}
-            <nav className="flex flex-wrap items-center justify-center gap-2 lg:flex-col lg:items-start lg:gap-2 mt-2">
+            <nav
+              className="flex flex-wrap items-center justify-center gap-2 lg:flex-col lg:items-start lg:gap-2 mt-2"
+              aria-label="Event filters"
+            >
               <button
                 className={`font-medium px-3 py-1 rounded-full transition-colors ${selectedBadge === 'all' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-primary'}`}
                 onClick={() => setSelectedBadge('all')}
                 disabled={isPending}
+                aria-pressed={selectedBadge === 'all'}
               >
                 All
               </button>
@@ -61,6 +82,7 @@ export function EventsPageClient({ events, badges }: { events: Event[]; badges: 
                   className={`px-3 py-1 rounded-full transition-colors ${selectedBadge === badge ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-primary'}`}
                   onClick={() => startTransition(() => setSelectedBadge(badge))}
                   disabled={isPending}
+                  aria-pressed={selectedBadge === badge}
                 >
                   {badge}
                 </button>
@@ -69,36 +91,44 @@ export function EventsPageClient({ events, badges }: { events: Event[]; badges: 
           </header>
           {/* Event grid */}
           <div className="w-full grid justify-items-stretch grid-cols-1 gap-4 md:grid-cols-2">
-            {filteredEvents.map((event) => (
-              <Link
-                href={`/events/${event.slug}`}
-                key={event.id}
-                className="w-full group relative isolate h-80 rounded-lg bg-background"
-              >
-                <div className="z-10 flex h-full flex-col justify-between p-6">
-                  <div className="flex justify-between">
-                    <p className="text-muted-foreground transition-colors duration-500 group-hover:text-background">
-                      {event.event_start_time
-                        ? new Date(event.event_start_time).toLocaleDateString(undefined, { dateStyle: 'medium' })
-                        : ''}
-                    </p>
-                    <Badge variant={event.event_modality === 'online' ? 'secondary' : 'default'}>{event.event_modality.replace('_', ' ')}</Badge>
+            {filteredEvents.length === 0 ? (
+              <EmptyState />
+            ) : (
+              filteredEvents.map((event) => (
+                <Link
+                  href={`/events/${event.slug}`}
+                  key={event.id}
+                  className="w-full group relative isolate h-80 rounded-lg bg-background"
+                >
+                  <div className="z-10 flex h-full flex-col justify-between p-6">
+                    <div className="flex justify-between">
+                      <time
+                        dateTime={event.event_start_time || ''}
+                        className="text-muted-foreground transition-colors duration-500 group-hover:text-background"
+                      >
+                        {event.event_start_time
+                          ? new Date(event.event_start_time).toLocaleDateString(undefined, { dateStyle: 'medium' })
+                          : ''}
+                      </time>
+                      <Badge variant={event.event_modality === 'online' ? 'secondary' : 'default'}>{event.event_modality.replace('_', ' ')}</Badge>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <h2 className="line-clamp-2 text-xl font-medium transition-colors duration-500 group-hover:text-background">
+                        {event.name}
+                      </h2>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <h2 className="line-clamp-2 text-xl font-medium transition-colors duration-500 group-hover:text-background">
-                      {event.name}
-                    </h2>
-                  </div>
-                </div>
-                <Image
-                  src={event.featured_image_url || '/images/event-placeholder.jpg'}
-                  alt={event.name}
-                  className="absolute inset-0 -z-10 size-full rounded-lg object-cover brightness-50 transition-all duration-500 ease-[cubic-bezier(0.77,0,0.175,1)] [clip-path:inset(0_0_100%_0)] group-hover:[clip-path:inset(0_0_0%_0)]"
-                  width={1000}
-                  height={1000}
-                />
-              </Link>
-            ))}
+                  <Image
+                    src={event.featured_image_url || '/images/event-placeholder.jpg'}
+                    alt={event.name}
+                    loading="lazy"
+                    className="absolute inset-0 -z-10 size-full rounded-lg object-cover brightness-50 transition-all duration-500 ease-[cubic-bezier(0.77,0,0.175,1)] [clip-path:inset(0_0_100%_0)] group-hover:[clip-path:inset(0_0_0%_0)]"
+                    width={1000}
+                    height={1000}
+                  />
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </div>
