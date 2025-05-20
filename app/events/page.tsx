@@ -1,5 +1,6 @@
+import type { Metadata } from 'next';
 import { getAllPublishedEvents, getAllEventTypeBadges } from "@/lib/events";
-import { EventsPageClient } from "@/components/blocks/EventsPageClient";
+import { EventsPageClient } from "@/components/clients/EventsPageClient";
 
 /**
  * Events Page Component
@@ -15,6 +16,16 @@ import { EventsPageClient } from "@/components/blocks/EventsPageClient";
  * The page uses Promise.all to fetch both events and event type badges in parallel,
  * optimizing the initial load time.
  */
+export const metadata: Metadata = {
+  title: 'Events | Mediation and Conflict Resolution Center',
+  description: 'Join our in-person and online workshops to build mediation skills, strengthen connections, and turn conflict into community.',
+  openGraph: {
+    title: 'Events | Mediation and Conflict Resolution Center',
+    description: 'Join our in-person and online workshops to build mediation skills, strengthen connections, and turn conflict into community.',
+    type: 'website',
+  },
+};
+
 export default async function Event() {
   // Fetch both events and event type badges concurrently
   const [events, badges] = await Promise.all([

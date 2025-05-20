@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import DynamicBreadcrumbs from "@/components/blocks/DynamicBreadcrumbs";
 import Image from "next/image";
 import ListThreeCol from "@/components/blocks/ListThreeCol";
+import { PageHeader } from "@/components/blocks/PageHeader";
 
 
 const listData = {
@@ -83,25 +83,22 @@ export default function Mediation() {
     }
   };
   return (
-    <section className="py-32">
-      <div className="container mx-auto max-w-7xl px-8">
-        <DynamicBreadcrumbs />
-        <h1 className="mt-9 mb-4 max-w-3xl text-7xl font-bold md:mb-6 capitalize break-words">
-          Group Facilitation
-        </h1>
-        <p className="mb-6 max-w-xl text-lg">
-          Holding Space for Meaningful Conversations
-        </p>
+    <section className="py-16">
+      <div className="center-container">
+        <PageHeader
+          title="Facilitation"
+          description="Holding Space for Meaningful Conversations"
+        />
 
         <div className="relative mt-12 grid max-w-screen-xl gap-14 lg:mt-14 lg:grid lg:grid-cols-12 lg:gap-6">
           <div className="order-2 lg:order-none lg:col-span-8">
             <div>
               <Image
-                src="https://shadcnblocks.com/images/block/placeholder-1.svg"
+                src="/images/services/facilitation-v2.jpg"
                 alt="placeholder"
-                className="mt-0 mb-8 aspect-video w-full rounded-lg border object-cover"
-                width={1000}
-                height={1000}
+                className="mt-0 mb-8 aspect-video w-full rounded-lg border object-cover object-top"
+                width={400}
+                height={400}
               />
               <p className="text-sm text-muted-foreground">
                 In a kingdom far away, there lived a ruler who faced a peculiar
