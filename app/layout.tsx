@@ -4,7 +4,7 @@ import "@/assets/styles/globals.css";
 
 // UI Components
 import { NavigationWrapper } from "./components/NavigationWrapper";
-import { Footer } from "@/components/blocks/Footer";
+import { FooterWrapper } from "./components/FooterWrapper";
 
 // Import the Auth Provider
 import { AuthProvider } from "@/lib/auth-context";
@@ -32,7 +32,7 @@ export default function RootLayout({
             <main>{children}</main>
           </NavigationWrapper>
           <Toaster />
-          <Footer />
+          <FooterWrapper />
         </AuthProvider>
       </body>
     </html>
