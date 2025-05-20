@@ -1,8 +1,10 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+
 import Link from 'next/link'
 import Image from 'next/image'
+
 import { useRouter, usePathname } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { useAuth } from '@/lib/auth-context'
@@ -21,6 +23,7 @@ import {
   ChevronDown,
   Search,
   LogOut,
+  SquareArrowLeft,
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -205,6 +208,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <li>{renderSecondaryNavLinks(secondaryNavigation, isMobile)}</li>
           )}
           <li className="mt-auto">
+            <Link
+              href="/"
+              onClick={() => isMobile && setSidebarOpen(false)}
+              className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            >
+              <SquareArrowLeft
+                className="h-6 w-6 shrink-0 text-sidebar-foreground group-hover:text-sidebar-accent-foreground"
+                aria-hidden="true"
+              />
+              Leave Dashboard
+            </Link>
             <Link
               href="/dashboard/settings"
               onClick={() => isMobile && setSidebarOpen(false)}
