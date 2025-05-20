@@ -18,8 +18,6 @@ const GridImageCards = ({ CardData }: { CardData: CardData[] }) => {
         </h2>
         <p className="mb-8 max-w-3xl text-muted-foreground lg:text-xl">
           We are proud to be guided by a team whose compassion, wisdom, and commitment bring our mission to life every day.
-
-
         </p>
         <div className="flex w-full flex-col justify-center gap-2 sm:flex-row">
           <Button className="w-full sm:w-auto">Become a Volunteer</Button>
