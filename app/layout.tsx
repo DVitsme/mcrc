@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "@/assets/styles/globals.css";
 
 // UI Components
-import { Navbar1 } from "@/components/blocks/Navbar1";
+import { NavigationWrapper } from "./components/NavigationWrapper";
 import { Footer } from "@/components/blocks/Footer";
 
 // Import the Auth Provider
@@ -26,12 +26,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} antialiased`}
-      >
+      <body className={`${inter.className} antialiased`}>
         <AuthProvider>
-          <Navbar1 />
-          <main>{children}</main>
+          <NavigationWrapper>
+            <main>{children}</main>
+          </NavigationWrapper>
           <Toaster />
           <Footer />
         </AuthProvider>
