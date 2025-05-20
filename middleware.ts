@@ -55,12 +55,17 @@ export async function middleware(request: NextRequest) {
   if (!user && request.nextUrl.pathname.startsWith('/dashboard')) {
     const url = new URL('/signin', request.url)
     url.searchParams.set('redirect', request.nextUrl.pathname)
+    url.searchParams.set('toast', 'Please sign in to access this page')
+    url.searchParams.set('toastType', 'warning')
     return NextResponse.redirect(url)
   }
 
   // Prevent signed-in users from re-visiting auth pages
   if (user && ['/signin', '/signup'].includes(request.nextUrl.pathname)) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    const url = new URL('/dashboard', request.url)
+    url.searchParams.set('toast', 'You are already signed in')
+    url.searchParams.set('toastType', 'info')
+    return NextResponse.redirect(url)
   }
 
   return response
