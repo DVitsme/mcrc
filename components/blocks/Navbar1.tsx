@@ -1,6 +1,6 @@
 'use client'
-import React, { useEffect, useState } from 'react';
-import { Book, Menu, Sunset, Trees, Zap, User } from "lucide-react";
+import React from 'react';
+import { Book, Menu, Sunset, Trees, Zap, User, ChevronDown } from "lucide-react";
 import { createBrowserClient } from '@supabase/ssr';
 import { useAuth } from '@/lib/auth-context';
 
@@ -31,6 +31,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 import Link from "next/link";
 import Image from "next/image";
@@ -163,39 +164,13 @@ const Navbar1 = ({
     signup: { text: "Sign up", url: "/signup" },
   },
 }: Navbar1Props) => {
-  const [userName, setUserName] = useState<string>('');
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const router = useRouter();
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
-
-  useEffect(() => {
-    const fetchUserName = async () => {
-      if (!user) {
-        setUserName('');
-        return;
-      }
-
-      try {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', user.id)
-          .single();
-
-        if (profileData?.full_name) {
-          setUserName(profileData.full_name);
-        }
-      } catch (error) {
-        console.error('Error fetching user name:', error);
-      }
-    };
-
-    fetchUserName();
-  }, [user]);
 
   const handleSignOut = async () => {
     try {
@@ -236,17 +211,28 @@ const Navbar1 = ({
                 <div className="flex items-center gap-3">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                        <User className="size-4" />
-                        <span>{userName || 'User'}</span>
+                      <Button variant="ghost" className="-m-1.5 flex items-center p-1.5">
+                        <span className="sr-only">Open user menu</span>
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={profile?.avatar_url || '/images/default-avatar.png'} alt={profile?.full_name || user.email || 'User'} />
+                          <AvatarFallback>
+                            {(profile?.full_name || user.email || 'U').charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="hidden lg:flex lg:items-center">
+                          <span className="ml-4 text-sm font-semibold leading-6 text-foreground" aria-hidden="true">
+                            {profile?.full_name || user.email || 'User'}
+                          </span>
+                          <ChevronDown className="ml-2 h-5 w-5 text-muted-foreground" aria-hidden="true" />
+                        </span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>
-                        <Link href="/profile">Profile</Link>
+                        <Link href="/dashboard/profile">Profile</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href="/settings">Settings</Link>
+                        <Link href="/dashboard/settings">Settings</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={handleSignOut}>
                         Sign out
@@ -331,7 +317,7 @@ const Navbar1 = ({
                       <>
                         <div className="flex items-center gap-2 py-2">
                           <User className="size-5" />
-                          <span className="font-medium">{userName || 'User'}</span>
+                          <span className="font-medium">{profile?.full_name || user.email || 'User'}</span>
                         </div>
                         <Button asChild>
                           <Link href="/dashboard">To Dashboard</Link>

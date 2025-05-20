@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -79,10 +79,7 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [userName, setUserName] = useState<string>('')
-  const [userInitial, setUserInitial] = useState<string>('')
-
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -90,35 +87,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
-
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (user) {
-        const { data: profileData, error } = await supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', user.id)
-          .single()
-
-        if (error) {
-          console.error('Error fetching user profile for layout:', error)
-        } else if (profileData) {
-          setUserName(profileData.full_name || user.email || 'User')
-          setUserInitial(
-            profileData.full_name
-              ? profileData.full_name.charAt(0).toUpperCase()
-              : user.email
-                ? user.email.charAt(0).toUpperCase()
-                : 'U'
-          )
-        }
-      } else {
-        setUserName('')
-        setUserInitial('')
-      }
-    }
-    fetchUserProfile()
-  }, [user, supabase])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -128,6 +96,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const userNavigation = [
     { name: 'Your Profile', href: '/dashboard/profile' },
   ]
+
+  console.log('app/dashboard/layout.tsx', user)
 
   const renderNavLinks = (navItems: NavItem[], isMobile: boolean = false) => (
     <ul role="list" className={cn("-mx-2 space-y-1", isMobile && "mt-2")}>
@@ -140,7 +110,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
                 ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                 : 'text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent',
-              'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+              'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold cursor-pointer'
             )}
           >
             <item.icon
@@ -174,7 +144,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 pathname === team.href
                   ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                   : 'text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent',
-                'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold cursor-pointer'
               )}
             >
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-sidebar-primary bg-sidebar-primary text-sidebar-primary-foreground text-[0.625rem] font-medium">
@@ -197,7 +167,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             width={32}
             alt="MCRC Logo"
             src="/images/logos/mcrc-logo.png"
-            className="h-8 w-auto"
+            className="h-8 w-auto cursor-pointer"
           />
         </Link>
       </div>
@@ -211,7 +181,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <Link
               href="/"
               onClick={() => isMobile && setSidebarOpen(false)}
-              className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-sidebar-foreground cursor-pointer hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             >
               <SquareArrowLeft
                 className="h-6 w-6 shrink-0 text-sidebar-foreground group-hover:text-sidebar-accent-foreground"
@@ -222,7 +192,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <Link
               href="/dashboard/settings"
               onClick={() => isMobile && setSidebarOpen(false)}
-              className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-sidebar-foreground cursor-pointer hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             >
               <Cog
                 className="h-6 w-6 shrink-0 text-sidebar-foreground group-hover:text-sidebar-accent-foreground"
@@ -303,30 +273,34 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                       <Button variant="ghost" className="-m-1.5 flex items-center p-1.5">
                         <span className="sr-only">Open user menu</span>
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.user_metadata?.avatar_url} alt={userName} />
-                          <AvatarFallback>{userInitial}</AvatarFallback>
+                          <AvatarImage src={profile?.avatar_url || '/images/default-avatar.png'} alt={profile?.full_name || user.email || 'User'} />
+                          <AvatarFallback>
+                            {(profile?.full_name || user.email || 'U').charAt(0).toUpperCase()}
+                          </AvatarFallback>
                         </Avatar>
                         <span className="hidden lg:flex lg:items-center">
                           <span className="ml-4 text-sm font-semibold leading-6 text-foreground" aria-hidden="true">
-                            {userName}
+                            {profile?.full_name || user.email || 'User'}
                           </span>
                           <ChevronDown className="ml-2 h-5 w-5 text-muted-foreground" aria-hidden="true" />
                         </span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>{userName}</DropdownMenuLabel>
+                      <DropdownMenuLabel>{profile?.full_name || user.email || 'User'}</DropdownMenuLabel>
                       <DropdownMenuLabel className="text-xs font-normal text-muted-foreground -mt-2 mb-1">
                         {user.email}
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       {userNavigation.map((item) => (
                         <DropdownMenuItem key={item.name} asChild>
-                          <Link href={item.href}>{item.name}</Link>
+                          <Link href={item.href} className="cursor-pointer hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+                            {item.name}
+                          </Link>
                         </DropdownMenuItem>
                       ))}
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleSignOut}>
+                      <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
                         <LogOut className="mr-2 h-4 w-4" />
                         Sign out
                       </DropdownMenuItem>
