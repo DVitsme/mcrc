@@ -19,6 +19,9 @@ const nextConfig: NextConfig = {
       {
         hostname: "images.pexels.com",
       },
+      {
+        hostname: "*.supabase.co",
+      },
     ],
   },
 };
