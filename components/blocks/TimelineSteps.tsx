@@ -1,9 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { DownloadIcon } from "lucide-react";
+import Image from "next/image";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TextBlockHeader from "@/components/blocks/TextBlockHeader";
@@ -78,14 +77,14 @@ const TimelineSteps = ({ title, description, phases, textBlockCenter = false }: 
             <TabsContent
               key={phase.id}
               value={phase.id}
-              className="mt-12 grid items-start gap-12 lg:grid-cols-2"
+              className={`mt-12 grid items-start gap-12 ${phase.imageSrc ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}
             >
               {/* Left column: Text content */}
-              <div className="col-span-1 flex flex-col gap-2 lg:max-w-lg lg:gap-4">
-                <p className="font-mono text-sm font-semibold tracking-tight text-muted-foreground">
+              <div className={`col-span-1 flex flex-col gap-2 lg:gap-4 ${phase.imageSrc ? "lg:max-w-lg" : "lg:max-w-full"}`}>
+                {/* <p className="font-mono text-sm font-semibold tracking-tight text-muted-foreground">
                   {phase.date}
-                </p>
-                <h2 className="text-3xl font-medium tracking-tighter text-foreground md:text-5xl">
+                </p> */}
+                <h2 className="text-2xl font-medium tracking-tighter text-foreground md:text-3xl">
                   {phase.heading}
                 </h2>
                 {/* 
@@ -109,35 +108,30 @@ const TimelineSteps = ({ title, description, phases, textBlockCenter = false }: 
                     <div dangerouslySetInnerHTML={phase.description} />
                   )}
                 </div>
-                <Button
-                  variant="outline"
-                  className="mt-8 flex w-fit items-center gap-2 rounded-full border border-border !px-4 py-2"
-                >
-                  <DownloadIcon className="size-4" />
-                  <p className="text-md font-medium text-foreground">
-                    Click to{" "}
-                    <span className="text-foreground/40">Download the app</span>
-                  </p>
-                </Button>
               </div>
 
               {/* Right column */}
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 100, y: 0 }}
-                transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.8 }}
-                className="relative z-20 col-span-1"
-              >
-                <Card className="group h-110 w-full rounded-3xl border border-border bg-background p-2 shadow-none">
-                  <CardContent className="size-full rounded-2xl border-2 border-background bg-muted">
-                    <img
-                      src={phase.imageSrc}
-                      className="size-full transition-all ease-in-out group-hover:scale-95"
-                      alt={phase.imageAlt}
-                    />
-                  </CardContent>
-                </Card>
-              </motion.div>
+              {phase.imageSrc && (
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 100, y: 0 }}
+                  transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.8 }}
+                  className="relative z-20 col-span-1"
+                >
+                  <Card className="group h-110 w-full rounded-3xl border border-border bg-background p-2 shadow-none">
+                    <CardContent className="size-full rounded-2xl border-2 border-background bg-muted">
+
+                      <Image
+                        src={phase.imageSrc}
+                        className="size-full transition-all ease-in-out group-hover:scale-95"
+                        alt={phase.imageAlt}
+                        width={500}
+                        height={500}
+                      />
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
             </TabsContent>
           ))}
         </Tabs>
