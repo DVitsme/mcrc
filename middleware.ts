@@ -1,6 +1,20 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 
+// Define protected routes and their required roles
+const PROTECTED_ROUTES = {
+  '/dashboard/users': ['coordinator'],
+  '/dashboard/events-management': ['coordinator'],
+  '/dashboard/blog-management': ['coordinator'],
+  '/dashboard/reports': ['coordinator'],
+  '/dashboard/cases': ['coordinator', 'mediator', 'participant'],
+  '/dashboard/profile': ['coordinator', 'mediator', 'participant'],
+  '/dashboard/settings': ['coordinator', 'mediator', 'participant'],
+} as const
+
+// Define public routes that don't require authentication
+const PUBLIC_ROUTES = ['/signin', '/signup', '/', '/about', '/contact']
+
 export async function middleware(request: NextRequest) {
   console.log('Middleware executing for path:', request.nextUrl.pathname)
 
@@ -34,41 +48,85 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Fetch the current user/session
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser()
+  try {
+    const path = request.nextUrl.pathname
 
-  if (userError) {
-    console.error('Middleware: getUser error (or no session):', userError.message)
-  }
+    // Handle public routes first
+    if (PUBLIC_ROUTES.includes(path)) {
+      // For auth pages (signin/signup), check if user is already authenticated
+      if (['/signin', '/signup'].includes(path)) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const url = new URL('/dashboard', request.url)
+          url.searchParams.set('toast', 'You are already signed in')
+          url.searchParams.set('toastType', 'info')
+          return NextResponse.redirect(url)
+        }
+      }
+      return response
+    }
 
-  console.log('Middleware - Auth state:', {
-    hasUser: !!user,
-    userId: user?.id,
-    path: request.nextUrl.pathname,
-    cookies: request.cookies.getAll().map(c => c.name + '=' + (c.value ? '✓' : '✗')),
-  })
+    // For all other routes, check authentication
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
 
-  // Protect /dashboard/*
-  if (!user && request.nextUrl.pathname.startsWith('/dashboard')) {
+    if (userError) {
+      console.error('Middleware: getUser error:', userError.message)
+      throw userError
+    }
+
+    // If not authenticated and trying to access protected route, redirect to signin
+    if (!user && path.startsWith('/dashboard')) {
+      const url = new URL('/signin', request.url)
+      url.searchParams.set('redirect', path)
+      url.searchParams.set('toast', 'Please sign in to access this page')
+      url.searchParams.set('toastType', 'warning')
+      return NextResponse.redirect(url)
+    }
+
+    // If authenticated, check profile and permissions
+    if (user && path.startsWith('/dashboard')) {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role, is_active')
+        .eq('id', user.id)
+        .single()
+
+      if (profileError) {
+        console.error('Middleware: profile fetch error:', profileError.message)
+        throw profileError
+      }
+
+      // Check if user profile exists and is active
+      if (!profile || !profile.is_active) {
+        const url = new URL('/signin', request.url)
+        url.searchParams.set('toast', 'Your account is not active. Please contact support.')
+        url.searchParams.set('toastType', 'error')
+        return NextResponse.redirect(url)
+      }
+
+      // Check role-based access for specific routes
+      for (const [route, allowedRoles] of Object.entries(PROTECTED_ROUTES)) {
+        if (path.startsWith(route)) {
+          if (!allowedRoles.includes(profile.role)) {
+            const url = new URL('/dashboard', request.url)
+            url.searchParams.set('toast', 'You do not have permission to access this page')
+            url.searchParams.set('toastType', 'error')
+            return NextResponse.redirect(url)
+          }
+          break
+        }
+      }
+    }
+
+    return response
+  } catch (error) {
+    console.error('Middleware error:', error)
+    // On error, redirect to signin with error message
     const url = new URL('/signin', request.url)
-    url.searchParams.set('redirect', request.nextUrl.pathname)
-    url.searchParams.set('toast', 'Please sign in to access this page')
-    url.searchParams.set('toastType', 'warning')
+    url.searchParams.set('toast', 'An error occurred. Please try again.')
+    url.searchParams.set('toastType', 'error')
     return NextResponse.redirect(url)
   }
-
-  // Prevent signed-in users from re-visiting auth pages
-  if (user && ['/signin', '/signup'].includes(request.nextUrl.pathname)) {
-    const url = new URL('/dashboard', request.url)
-    url.searchParams.set('toast', 'You are already signed in')
-    url.searchParams.set('toastType', 'info')
-    return NextResponse.redirect(url)
-  }
-
-  return response
 }
 
 export const config = {
@@ -76,5 +134,7 @@ export const config = {
     '/dashboard/:path*',
     '/signin',
     '/signup',
+    '/profile/:path*',
+    '/settings/:path*',
   ],
 }
