@@ -2,9 +2,19 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
+type ErrorResponse = {
+  message: string;
+  status: number;
+};
+
+type ServerError = {
+  message: string;
+  stack?: string;
+};
+
 export async function POST(request: NextRequest) {
   console.log('API /api/auth/signin: Received POST request');
-  let responseToClient; // This will be the final response sent
+  let responseToClient: NextResponse;
 
   try {
     const body = await request.json();
@@ -15,7 +25,11 @@ export async function POST(request: NextRequest) {
 
     if (!email || !password) {
       console.log('API /api/auth/signin: Email or password missing in request body');
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+      const errorResponse: ErrorResponse = {
+        message: 'Email and password are required',
+        status: 400
+      };
+      return NextResponse.json(errorResponse, { status: errorResponse.status });
     }
 
     // Create an initial response object. Supabase client will add cookies to this.
@@ -57,10 +71,11 @@ export async function POST(request: NextRequest) {
     if (signInError) {
       console.error('API /api/auth/signin: Supabase signInWithPassword error:', signInError.message, 'Status:', signInError.status);
       // Return a JSON response with the error details from Supabase
-      return NextResponse.json(
-        { error: signInError.message, details: signInError.cause || 'Authentication failed' },
-        { status: signInError.status || 401 }
-      );
+      const errorResponse: ErrorResponse = {
+        message: signInError.message,
+        status: signInError.status || 401
+      };
+      return NextResponse.json(errorResponse, { status: errorResponse.status });
     }
 
     console.log('API /api/auth/signin: signInWithPassword successful. User ID:', data.user?.id);
@@ -69,24 +84,31 @@ export async function POST(request: NextRequest) {
 
     // Construct the final success response with the user data and the cookies.
     responseToClient = NextResponse.json(
-      { message: 'Sign in successful', user: { id: data.user?.id, email: data.user?.email } },
+      {
+        user: data.user ? {
+          id: data.user.id,
+          email: data.user.email
+        } : null,
+        session: data.session
+      },
       { status: 200 }
     );
 
     // Copy cookies from supabaseResponseCookies to the final responseToClient
-    supabaseResponseCookies.cookies.getAll().forEach(cookie => {
+    const cookies = supabaseResponseCookies.cookies.getAll();
+    cookies.forEach((cookie) => {
       responseToClient.cookies.set(cookie.name, cookie.value, cookie);
     });
 
     return responseToClient;
 
-  } catch (e: any) {
-    // This catches errors like `request.json()` failing if the body is not valid JSON,
-    // or any other unexpected errors in the try block.
-    console.error('API /api/auth/signin: Unhandled exception in POST handler:', e.message, e.stack);
-    return NextResponse.json(
-      { error: 'Internal Server Error', details: e.message || 'An unexpected error occurred on the server.' },
-      { status: 500 }
-    );
+  } catch (e: unknown) {
+    const error = e as ServerError;
+    console.error('API /api/auth/signin: Unhandled exception in POST handler:', error.message, error.stack);
+    const errorResponse: ErrorResponse = {
+      message: 'Internal Server Error',
+      status: 500
+    };
+    return NextResponse.json(errorResponse, { status: errorResponse.status });
   }
 }

@@ -1,95 +1,144 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 import { createBrowserClient } from "@supabase/ssr"
 import { DataTable } from "@/components/dashboard-components/data-table"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
 import { BlogSheet } from "@/components/dashboard-components/blog-sheet"
 import { Blog } from "@/lib/schemas/blog"
+import { toast } from "sonner"
+import { ColumnDef } from "@tanstack/react-table"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
+
+type BlogTableData = {
+  id: string;
+  header: string;
+  type: string;
+  status: string;
+  target: string;
+  limit: string;
+  reviewer: string;
+  skills?: string[];
+};
 
 export default function BlogsPage() {
-  const [blogs, setBlogs] = useState<Blog[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null)
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
-
-  useEffect(() => {
-    fetchBlogs()
-  }, [])
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [tableData, setTableData] = useState<BlogTableData[]>([]);
+  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const fetchBlogs = async () => {
     try {
       const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
+      );
 
       const { data, error } = await supabase
-        .from('blog_posts')
+        .from('blogs')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching blogs:', error.message)
-        return
-      }
-      console.log("dashboard/blogs/page.tsx data", data)
-      setBlogs(data || [])
+      if (error) throw error;
+
+      const blogData = data || [];
+      setBlogs(blogData);
+
+      // Transform blog data to match table schema
+      const transformedData: BlogTableData[] = blogData.map(blog => ({
+        id: blog.id,
+        header: blog.title,
+        type: blog.status,
+        status: blog.status,
+        target: blog.author_id,
+        limit: 'Standard',
+        reviewer: 'Admin',
+        skills: blog.tags
+      }));
+
+      setTableData(transformedData);
     } catch (error) {
-      console.error('Error in fetchBlogs:', error)
-    } finally {
-      setIsLoading(false)
+      console.error('Error fetching blogs:', error);
+      toast.error('Failed to fetch blogs');
     }
-  }
+  };
+
+  useEffect(() => {
+    void fetchBlogs();
+  }, []);
 
   const handleCreateBlog = () => {
-    setSelectedBlog(null)
-    setIsSheetOpen(true)
-  }
+    setSelectedBlog(null);
+    setIsSheetOpen(true);
+  };
 
-  const handleEditBlog = (blog: Blog) => {
-    setSelectedBlog(blog)
-    setIsSheetOpen(true)
-  }
+  const handleEditBlog = (blog: BlogTableData) => {
+    const originalBlog = blogs.find(b => b.id === blog.id);
+    if (originalBlog) {
+      setSelectedBlog(originalBlog);
+      setIsSheetOpen(true);
+    }
+  };
 
   const handleDeleteBlog = async (blogId: string) => {
     try {
       const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
+      );
 
       const { error } = await supabase
         .from('blogs')
         .delete()
-        .eq('id', blogId)
+        .eq('id', blogId);
 
-      if (error) {
-        console.error('Error deleting blog:', error.message)
-        return
-      }
+      if (error) throw error;
 
-      // Refresh the blogs list
-      fetchBlogs()
+      setBlogs(blogs.filter(blog => blog.id !== blogId));
+      setTableData(tableData.filter(blog => blog.id !== blogId));
+      toast.success('Blog deleted successfully');
     } catch (error) {
-      console.error('Error in handleDeleteBlog:', error)
+      console.error('Error deleting blog:', error);
+      toast.error('Failed to delete blog');
     }
-  }
+  };
 
-  // Transform blogs data for the DataTable
-  const tableData = blogs.map(blog => ({
-    id: blog.id,
-    header: blog.title,
-    type: blog.status,
-    status: blog.status,
-    target: blog.excerpt,
-    limit: new Date(blog.created_at).toLocaleDateString(),
-    reviewer: blog.author_id,
-    content: blog.content,
-    slug: blog.slug,
-    tags: blog.tags || [],
-  }))
+  const columns: ColumnDef<BlogTableData>[] = [
+    {
+      accessorKey: "header",
+      header: "Title",
+    },
+    {
+      accessorKey: "type",
+      header: "Status",
+    },
+    {
+      accessorKey: "target",
+      header: "Author",
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => {
+        const blog = row.original;
+        return (
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleEditBlog(blog)}
+              className="text-blue-600 hover:text-blue-800"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => handleDeleteBlog(blog.id)}
+              className="text-red-600 hover:text-red-800"
+            >
+              Delete
+            </button>
+          </div>
+        );
+      },
+    },
+  ];
 
   return (
     <div className="container mx-auto py-10">
@@ -101,7 +150,10 @@ export default function BlogsPage() {
         </Button>
       </div>
 
-      <DataTable data={tableData} />
+      <DataTable
+        data={tableData}
+        columns={columns}
+      />
 
       <BlogSheet
         blog={selectedBlog}
@@ -110,5 +162,5 @@ export default function BlogsPage() {
         onSave={fetchBlogs}
       />
     </div>
-  )
+  );
 } 
