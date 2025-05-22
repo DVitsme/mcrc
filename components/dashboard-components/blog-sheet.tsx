@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { createBrowserClient } from "@supabase/ssr"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -33,9 +32,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "sonner"
-import { blogSchema } from "@/app/dashboard/blogs/page"
-
-type Blog = z.infer<typeof blogSchema>
+import { blogSchema, Blog } from "@/lib/schemas/blog"
 
 interface BlogSheetProps {
   blog: Blog | null

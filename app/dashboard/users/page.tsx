@@ -15,6 +15,7 @@ import { useAuth } from "@/lib/auth-context"
 import { Profile } from "@/lib/auth-context"
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
+import { Blog } from "@/lib/schemas/blog"
 
 // Define the user schema for the DataTable
 const userSchema = z.object({
