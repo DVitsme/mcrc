@@ -55,8 +55,29 @@ export async function middleware(request: NextRequest) {
     if (PUBLIC_ROUTES.includes(path)) {
       // For auth pages (signin/signup), check if user is already authenticated
       if (['/signin', '/signup'].includes(path)) {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user) {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+
+        if (sessionError) {
+          console.error('Middleware: Session error:', sessionError.message)
+          // Clear any invalid session cookies
+          response.cookies.delete('sb-dgueacxqidptazdmgdvq-auth-token')
+          return response
+        }
+
+        if (session?.user) {
+          // Verify the user's profile is active
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('is_active')
+            .eq('id', session.user.id)
+            .single()
+
+          if (profileError || !profile?.is_active) {
+            // Clear invalid session
+            response.cookies.delete('sb-dgueacxqidptazdmgdvq-auth-token')
+            return response
+          }
+
           const url = new URL('/dashboard', request.url)
           url.searchParams.set('toast', 'You are already signed in')
           url.searchParams.set('toastType', 'info')
@@ -67,15 +88,20 @@ export async function middleware(request: NextRequest) {
     }
 
     // For all other routes, check authentication
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
-    if (userError) {
-      console.error('Middleware: getUser error:', userError.message)
-      throw userError
+    if (sessionError) {
+      console.error('Middleware: Session error:', sessionError.message)
+      // Clear any invalid session cookies
+      response.cookies.delete('sb-dgueacxqidptazdmgdvq-auth-token')
+      const url = new URL('/signin', request.url)
+      url.searchParams.set('toast', 'Your session has expired. Please sign in again.')
+      url.searchParams.set('toastType', 'warning')
+      return NextResponse.redirect(url)
     }
 
     // If not authenticated and trying to access protected route, redirect to signin
-    if (!user && path.startsWith('/dashboard')) {
+    if (!session?.user && path.startsWith('/dashboard')) {
       const url = new URL('/signin', request.url)
       url.searchParams.set('redirect', path)
       url.searchParams.set('toast', 'Please sign in to access this page')
@@ -84,11 +110,11 @@ export async function middleware(request: NextRequest) {
     }
 
     // If authenticated, check profile and permissions
-    if (user && path.startsWith('/dashboard')) {
+    if (session?.user && path.startsWith('/dashboard')) {
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role, is_active')
-        .eq('id', user.id)
+        .eq('id', session.user.id)
         .single()
 
       if (profileError) {
@@ -98,6 +124,8 @@ export async function middleware(request: NextRequest) {
 
       // Check if user profile exists and is active
       if (!profile || !profile.is_active) {
+        // Clear invalid session
+        response.cookies.delete('sb-dgueacxqidptazdmgdvq-auth-token')
         const url = new URL('/signin', request.url)
         url.searchParams.set('toast', 'Your account is not active. Please contact support.')
         url.searchParams.set('toastType', 'error')
