@@ -1,0 +1,50 @@
+{
+  "columns": [
+    {
+      "key": "name",
+      "label": "Name"
+    },
+    {
+      "key": "email",
+      "label": "Email"
+    },
+    {
+      "key": "role",
+      "label": "Role"
+    },
+    {
+      "key": "status",
+      "label": "Status"
+    },
+    {
+      "key": "lastActive",
+      "label": "Last Active"
+    }
+  ],
+  "data": [
+    {
+      "id": "1",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "role": "coordinator",
+      "status": "active",
+      "lastActive": "2024-03-20T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "name": "Jane Smith",
+      "email": "jane@example.com",
+      "role": "mediator",
+      "status": "active",
+      "lastActive": "2024-03-19T15:30:00Z"
+    },
+    {
+      "id": "3",
+      "name": "Bob Wilson",
+      "email": "bob@example.com",
+      "role": "participant",
+      "status": "inactive",
+      "lastActive": "2024-03-18T09:15:00Z"
+    }
+  ]
+}
