@@ -72,37 +72,6 @@ export default function BlogsPage() {
     setIsSheetOpen(true);
   };
 
-  const handleEditBlog = (blog: BlogTableData) => {
-    const originalBlog = blogs.find(b => b.id === blog.id);
-    if (originalBlog) {
-      setSelectedBlog(originalBlog);
-      setIsSheetOpen(true);
-    }
-  };
-
-  const handleDeleteBlog = async (blogId: string) => {
-    try {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
-
-      const { error } = await supabase
-        .from('blogs')
-        .delete()
-        .eq('id', blogId);
-
-      if (error) throw error;
-
-      setBlogs(blogs.filter(blog => blog.id !== blogId));
-      setTableData(tableData.filter(blog => blog.id !== blogId));
-      toast.success('Blog deleted successfully');
-    } catch (error) {
-      console.error('Error deleting blog:', error);
-      toast.error('Failed to delete blog');
-    }
-  };
-
   const columns: ColumnDef<BlogTableData>[] = [
     {
       accessorKey: "header",
@@ -123,13 +92,13 @@ export default function BlogsPage() {
         return (
           <div className="flex gap-2">
             <button
-              onClick={() => handleEditBlog(blog)}
+              onClick={() => handleCreateBlog()}
               className="text-blue-600 hover:text-blue-800"
             >
               Edit
             </button>
             <button
-              onClick={() => handleDeleteBlog(blog.id)}
+              onClick={() => handleCreateBlog()}
               className="text-red-600 hover:text-red-800"
             >
               Delete

@@ -34,7 +34,7 @@ import { useAuth } from "@/lib/auth-context"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
-  const { user, profile, refreshProfile } = useAuth()
+  const { user, profile } = useAuth()
   const router = useRouter()
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

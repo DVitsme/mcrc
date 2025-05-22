@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     return responseToClient;
 
   } catch (e: unknown) {
-    const error = e as ServerError;
+    const error = e as Error;
     console.error('API /api/auth/signin: Unhandled exception in POST handler:', error.message, error.stack);
     const errorResponse: ErrorResponse = {
       message: 'Internal Server Error',

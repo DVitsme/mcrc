@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface PageHeroProps {
   title?: string;
@@ -13,9 +14,11 @@ export const PageHero = ({
 }: PageHeroProps) => (
   <section className="relative bg-indigo-300">
     <div className="absolute inset-0">
-      <img
-        alt=""
+      <Image
         src="https://images.unsplash.com/photo-1525130413817-d45c1d127c42?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1920&q=60&&sat=-100"
+        alt={title}
+        width={1200}
+        height={600}
         className="size-full object-cover"
       />
       <div aria-hidden="true" className="absolute inset-0 bg-orange-300 mix-blend-multiply" />

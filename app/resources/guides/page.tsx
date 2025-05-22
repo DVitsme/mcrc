@@ -103,7 +103,7 @@ export default function GuidesPage() {
           <h2 className="mb-4 text-2xl font-semibold">Need Additional Help?</h2>
           <p className="mb-4 text-muted-foreground">
             If you need clarification on any of our processes or have specific questions,
-            our team is here to help. Don't hesitate to reach out.
+            our team is here to help. Don&apos;t hesitate to reach out.
           </p>
           <Button asChild>
             <Link href="/contact">Contact Us</Link>

@@ -6,6 +6,7 @@ import { AuthError } from '@supabase/supabase-js'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import Image from 'next/image'
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -244,9 +245,11 @@ export default function Signup() {
             </div>
           </div>
 
-          <img
-            src="https://shadcnblocks.com/images/block/placeholder-1.svg"
-            alt="placeholder"
+          <Image
+            src="/path/to/your/image.jpg"
+            alt="Description"
+            width={500}
+            height={300}
             className="hidden h-full max-h-screen object-cover lg:block"
           />
         </div>

@@ -149,7 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // but can be included if its changes within the callback are meant to re-evaluate something,
     // though usually the subscription itself is stable.
     // Let's keep it minimal to avoid potential loops from isLoading itself.
-  }, [supabase, fetchProfile]);
+  }, [supabase, fetchProfile, isLoading]);
 
 
   return (
