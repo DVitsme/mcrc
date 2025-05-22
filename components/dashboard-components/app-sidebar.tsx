@@ -51,6 +51,11 @@ const data = {
       icon: UsersIcon,
     },
     {
+      title: "Blogs",
+      url: "/dashboard/blogs",
+      icon: FileTextIcon,
+    },
+    {
       title: "Lifecycle",
       url: "#",
       icon: ListIcon,

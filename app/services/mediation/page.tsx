@@ -1,3 +1,14 @@
+/**
+ * Mediation Service Page Component
+ * 
+ * This is a client-side component that displays detailed information about the mediation services
+ * offered by the Mediation and Conflict Resolution Center. It includes:
+ * - A header section with service description
+ * - Interactive content sections with scroll spy functionality
+ * - A sticky table of contents
+ * - Social sharing options
+ */
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -11,11 +22,22 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { PageHeader } from "@/components/blocks/PageHeader";
 
-
+/**
+ * Mediation Service Page Component
+ * 
+ * Implements a scroll spy functionality to track the active section in the viewport
+ * and update the table of contents accordingly.
+ */
 export default function Mediation() {
+  // State to track the currently active section in viewport
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  // Refs to store references to all section elements
   const sectionRefs = useRef<Record<string, HTMLElement>>({});
 
+  /**
+   * Sets up an Intersection Observer to track which sections are currently in view
+   * and updates the active section state accordingly.
+   */
   useEffect(() => {
     const sections = Object.keys(sectionRefs.current);
 
@@ -49,11 +71,17 @@ export default function Mediation() {
     };
   }, []);
 
+  /**
+   * Helper function to add section references to the refs object
+   * @param id - The section ID
+   * @param ref - The section element reference
+   */
   const addSectionRef = (id: string, ref: HTMLElement | null) => {
     if (ref) {
       sectionRefs.current[id] = ref;
     }
   };
+
   return (
     <section className="py-16">
       <div className="center-container">
@@ -200,6 +228,8 @@ export default function Mediation() {
               </p>
             </section>
           </div>
+          {/* Sidebar inpage-navigation */}
+
           <div className="order-1 flex h-fit flex-col text-sm lg:sticky lg:top-8 lg:order-none lg:col-span-3 lg:col-start-10 lg:text-xs">
             <div className="order-3 lg:order-none">
               <span className="text-xs font-medium">ON THIS PAGE</span>

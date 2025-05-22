@@ -63,7 +63,7 @@ const Hero = () => {
               <Button className="shadow-sm transition-shadow hover:shadow">
                 Request Mediation
               </Button>
-              <Button variant="outline" className="group bg-white/10 backdrop-blur-sm hover:bg-white/20">
+              <Button variant="outline" className="group bg-white backdrop-blur-sm hover:bg-white/80">
                 Learn more{" "}
                 <ExternalLink className="ml-2 h-4 transition-transform group-hover:translate-x-0.5" />
               </Button>

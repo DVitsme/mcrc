@@ -26,26 +26,26 @@ const AboutPreview = () => {
             </div>
             <div className="flex flex-col items-center justify-center gap-6 md:flex-row">
               <Image
-                src="https://shadcnblocks.com/images/block/photos/annie-spratt-MChSQHxGZrQ-unsplash.jpg"
+                src="/images/photos/vertical/1.jpg"
                 alt="about 1"
                 className="aspect-[0.7] w-full rounded-lg object-cover md:w-1/2"
-                width={1000}
-                height={1000}
+                width={500}
+                height={500}
               />
               <div className="flex w-full flex-col items-center justify-center gap-6 md:w-1/2">
                 <Image
-                  src="https://shadcnblocks.com/images/block/photos/annie-spratt-AkftcHujUmk-unsplash.jpg"
+                  src="/images/photos/vertical/2.jpg"
                   alt="about 2"
                   className="aspect-[1.1] rounded-lg object-cover"
-                  width={1000}
-                  height={1000}
+                  width={500}
+                  height={500}
                 />
                 <Image
-                  src="https://shadcnblocks.com/images/block/photos/annie-spratt-vGgn0xLdy8s-unsplash.jpg"
+                  src="/images/photos/vertical/3.jpg"
                   alt="about 3"
                   className="aspect-[0.7] rounded-lg object-cover"
-                  width={1000}
-                  height={1000}
+                  width={500}
+                  height={500}
                 />
               </div>
             </div>
@@ -53,26 +53,26 @@ const AboutPreview = () => {
           <div className="flex w-full flex-col items-center justify-center gap-12 pt-12 lg:w-1/2 lg:pt-48">
             <div className="flex flex-col items-center justify-center gap-6 md:flex-row">
               <Image
-                src="https://shadcnblocks.com/images/block/photos/johnson-wang-iI4sR_nkkbc-unsplash.jpg"
+                src="/images/photos/vertical/community-mediation.jpg"
                 alt="about 4"
                 className="aspect-[0.9] w-full rounded-lg object-cover md:w-1/2"
-                width={1000}
-                height={1000}
+                width={500}
+                height={500}
               />
               <div className="flex w-full flex-col items-center justify-center gap-6 md:w-1/2">
                 <Image
-                  src="https://shadcnblocks.com/images/block/photos/nastuh-abootalebi-eHD8Y1Znfpk-unsplash.jpg"
+                  src="/images/photos/vertical/5.jpg"
                   alt="about 5"
                   className="aspect-[0.8] rounded-lg object-cover"
-                  width={1000}
-                  height={1000}
+                  width={500}
+                  height={500}
                 />
                 <Image
-                  src="https://shadcnblocks.com/images/block/photos/alvin-engler-bIhpiQA009k-unsplash.jpg"
+                  src="/images/photos/vertical/6.jpg"
                   alt="about 6"
                   className="aspect-[0.9] rounded-lg object-cover"
-                  width={1000}
-                  height={1000}
+                  width={500}
+                  height={500}
                 />
               </div>
             </div>

@@ -5,106 +5,139 @@ import { FcGoogle } from "react-icons/fc";
 import { AuthError } from '@supabase/supabase-js'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 // Define the user role type to match the enum in the database
 type UserRole = 'coordinator' | 'mediator' | 'participant';
 
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export default function Signup() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const [role, setRole] = useState<UserRole>('participant') // Default role
+  const [role, setRole] = useState<UserRole>('participant')
+  const [error, setError] = useState<string | null>(null)
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  })
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const validateForm = () => {
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match')
+      return false
+    }
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters long')
+      return false
+    }
+    return true
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setError(null)
+
+    if (!validateForm()) {
+      return
+    }
+
     setIsLoading(true)
 
-    const formData = new FormData(e.currentTarget)
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
-    const name = formData.get('name') as string
-    // 'role' is taken from the component's state
-
     try {
-      // 1. Create the auth user.
-      // The 'data' in options will be available in the trigger's NEW.raw_user_meta_data
       const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
+        email: formData.email,
+        password: formData.password,
         options: {
-          data: { // This data is passed to the trigger via NEW.raw_user_meta_data
-            full_name: name,
-            role: role, // Pass the selected role
+          data: {
+            full_name: formData.name,
+            role: role,
           },
         },
       })
 
       if (error) throw error;
 
-      // Profile creation is now handled by the database trigger.
-      // The explicit insert from the client is no longer needed.
-
-      // if (data?.user) {
-      //   // THIS ENTIRE BLOCK IS REMOVED:
-      //   // const { error: profileError } = await supabase
-      //   //   .from('profiles')
-      //   //   .insert({ /* ... */ });
-      //   // if (profileError) throw profileError;
-      // }
-
-      // alert('Check your email for the confirmation link! Your profile will be set up.')
-      router.push('/dashboard')
+      if (data?.user) {
+        toast.success('Account created! Please check your email for a confirmation link.')
+        // Redirect to sign-in page with a message
+        router.push('/signin?toast=Please check your email to confirm your account&toastType=info')
+      }
     } catch (error) {
-      const authError = error as AuthError // Type assertion
-      alert(authError.message)
+      const authError = error as AuthError
+      setError(authError.message)
+      toast.error(authError.message)
     } finally {
       setIsLoading(false)
     }
   }
 
-  // ... (handleGoogleSignUp and JSX remain the same) ...
   const handleGoogleSignUp = async () => {
-    // For Google Sign Up, if you need to set a role, you'll typically do it
-    // after the first login or have a default role set by the trigger
-    // if raw_user_meta_data.role is not present.
-    // The trigger above will need to gracefully handle if 'role' is not in raw_user_meta_data
-    // or you might need a separate step for role selection for OAuth users.
-    // For now, the SQL trigger assumes 'role' is in raw_user_meta_data.
+    setError(null)
+    setIsLoading(true)
+
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
-          // You could try to pass role in query params for redirectTo
-          // or handle role selection post-first-login for OAuth.
-          // For simplicity, the trigger will use the role from metadata if present.
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            role: role // Pass role as a query parameter
+          }
         }
       })
       if (error) throw error
     } catch (error) {
-      const authError = error as AuthError // Type assertion
-      alert(authError.message)
+      const authError = error as AuthError
+      setError(authError.message)
+      toast.error(authError.message)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
-    // ... your JSX ...
     <section className="py-32">
       <div className="container mx-auto max-w-7xl">
         <div className="grid lg:grid-cols-2">
           <div className="py-10">
             <div className="mx-auto my-auto flex h-full w-full max-w-md flex-col justify-center gap-4 p-6">
               <div className="ite flex flex-col pb-6">
-                <p className="mb-2 text-3xl font-bold">Signup</p>
+                <p className="mb-2 text-3xl font-bold">Sign Up</p>
                 <p className="text-muted-foreground">
-                  {/* Start your 30-day free trial. */}
-                  Create your MCRC account.
+                  Create your MCRC account to get started.
                 </p>
               </div>
+
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
               <div className="w-full rounded-md bg-background">
                 <div>
                   <form onSubmit={handleSubmit}>
@@ -117,6 +150,8 @@ export default function Signup() {
                           type="text"
                           placeholder="Enter your name"
                           required
+                          value={formData.name}
+                          onChange={handleInputChange}
                         />
                       </div>
 
@@ -128,6 +163,8 @@ export default function Signup() {
                           type="email"
                           placeholder="Enter your email"
                           required
+                          value={formData.email}
+                          onChange={handleInputChange}
                         />
                       </div>
 
@@ -139,6 +176,21 @@ export default function Signup() {
                           type="password"
                           placeholder="Enter your password"
                           required
+                          value={formData.password}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+
+                      <div className="grid w-full max-w-sm items-center gap-1.5">
+                        <Label htmlFor="confirmPassword">Confirm Password</Label>
+                        <Input
+                          id="confirmPassword"
+                          name="confirmPassword"
+                          type="password"
+                          placeholder="Confirm your password"
+                          required
+                          value={formData.confirmPassword}
+                          onChange={handleInputChange}
                         />
                       </div>
 
@@ -165,11 +217,16 @@ export default function Signup() {
                       </div>
 
                       <Button type="submit" className="mt-2 w-full" disabled={isLoading}>
-                        {isLoading ? 'Creating account...' : 'Get Started'}
+                        {isLoading ? 'Creating account...' : 'Create Account'}
                       </Button>
                     </div>
                   </form>
-                  <Button variant="outline" className="w-full mt-4" onClick={handleGoogleSignUp}>
+                  <Button
+                    variant="outline"
+                    className="w-full mt-4"
+                    onClick={handleGoogleSignUp}
+                    disabled={isLoading}
+                  >
                     <FcGoogle className="mr-2 size-5" />
                     Sign up with Google
                   </Button>

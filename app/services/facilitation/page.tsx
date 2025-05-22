@@ -1,6 +1,6 @@
 "use client";
 
-import { Facebook, Lightbulb, Linkedin, Twitter } from "lucide-react";
+import { ClipboardCheck, Facebook, Heart, Lightbulb, Linkedin, MessageSquare, NotebookPen, Twitter, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -12,7 +12,10 @@ import Image from "next/image";
 import ListThreeCol from "@/components/blocks/ListThreeCol";
 import { PageHeader } from "@/components/blocks/PageHeader";
 
-
+/**
+ * Data structure for the three-column list component
+ * Defines the supported areas for group facilitation services
+ */
 const listData = {
   title: "Group facilitation can support",
   description: "Section description",
@@ -40,10 +43,22 @@ const listData = {
   ]
 };
 
+/**
+ * Facilitation Service Page Component
+ * 
+ * Implements a scroll spy functionality to track the active section in the viewport
+ * and update the table of contents accordingly.
+ */
 export default function Mediation() {
+  // State to track the currently active section in viewport
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  // Refs to store references to all section elements
   const sectionRefs = useRef<Record<string, HTMLElement>>({});
 
+  /**
+   * Sets up an Intersection Observer to track which sections are currently in view
+   * and updates the active section state accordingly.
+   */
   useEffect(() => {
     const sections = Object.keys(sectionRefs.current);
 
@@ -77,11 +92,17 @@ export default function Mediation() {
     };
   }, []);
 
+  /**
+   * Helper function to add section references to the refs object
+   * @param id - The section ID
+   * @param ref - The section element reference
+   */
   const addSectionRef = (id: string, ref: HTMLElement | null) => {
     if (ref) {
       sectionRefs.current[id] = ref;
     }
   };
+
   return (
     <section className="py-16">
       <div className="center-container">
@@ -142,8 +163,91 @@ export default function Mediation() {
               <p>
                 Our facilitators create brave spaces for dialogue, ensuring that conversations are productive, inclusive, and move toward shared understanding.
               </p>
+
+              <div className="mt-4 lg:max-w-lg">
+                <h2 className="my-12 text-xl font-semibold md:text-4xl">
+                  Our goal is always the same: <span className="text-primary underline">to hold space where people can show up, speak honestly, and move forward—together.</span>
+                </h2>
+
+              </div>
+              <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
+                <div className="flex flex-col overflow-clip rounded-xl border border-border md:col-span-2 md:grid md:grid-cols-2 md:gap-6 lg:gap-8">
+                  <div className="md:min-h-[24rem] lg:min-h-[28rem] xl:min-h-[32rem]">
+                    <Image
+                      src="/images/photos/vertical/community-mediation.jpg"
+                      alt="Feature 1"
+                      className="aspect-[16/9] h-full w-full object-cover object-center"
+                      width={400}
+                      height={400}
+                    />
+                  </div>
+                  <div className="flex flex-col justify-center px-6 py-8 md:px-8 md:py-10 lg:px-10 lg:py-12">
+                    <h3 className="mb-3 text-lg font-semibold md:mb-4 md:text-2xl lg:mb-6">
+                      Who We Work With
+                    </h3>
+                    <p className="text-muted-foreground lg:text-lg">
+                      We support neighborhood groups, nonprofits, schools, families, community colleges, and coalitions who are doing the work of building stronger communities. If your group is facing a big question, a shift in direction, or a time of tension or change, we’re here to help guide the conversation.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section
+              id="section4"
+              ref={(ref) => addSectionRef("section4", ref)}
+              className="prose mb-8"
+            >
+              <div>
+                <div className="mx-auto mt-12 grid max-w-screen-xl gap-y-6 lg:grid-cols-1">
+
+                  <div className="dark rounded-md border bg-background p-6 text-primary md:p-10 lg:rounded-l-none lg:rounded-r-md">
+                    <h2 className="mb-6 text-3xl font-semibold md:text-4xl">
+                      How Our Facilitation Services Can Help
+                    </h2>
+                    <p className="mb-6 text-lg text-muted-foreground">
+                      We design and lead conversations that help your group move forward with clarity and care.
+                      <br /> Here are a few ways facilitation might support you:
+                    </p>
+
+                    <div className="mt-10">
+                      <div className="flex items-center gap-7 py-6">
+                        <ClipboardCheck className="h-auto w-8 shrink-0" />
+                        <p>
+                          Shaping the goals of a new advisory board
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-7 border-y border-dashed border-primary py-6">
+                        <NotebookPen className="h-auto w-8 shrink-0" />
+                        <p>
+                          Working through a strategic plan or organizational priorities
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-7 border-y border-dashed border-primary py-6">
+                        <Heart className="h-auto w-8 shrink-0" />
+                        <p>
+                          Building trust after a conflict or loss
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-7 border-y border-dashed border-primary py-6">
+                        <MessageSquare className="h-auto w-8 shrink-0" />
+                        <p>
+                          Supporting equity-focused conversations or hard decision-making
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-7 py-6">
+                        <Users className="h-auto w-8 shrink-0" />
+                        <p>
+                          Creating space for everyone to be heard and valued
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </section>
           </div>
+          {/* Sidebar inpage-navigation */}
           <div className="order-1 flex h-fit flex-col text-sm lg:sticky lg:top-8 lg:order-none lg:col-span-3 lg:col-start-10 lg:text-xs">
             <div className="order-3 lg:order-none">
               <span className="text-xs font-medium">ON THIS PAGE</span>
@@ -191,6 +295,7 @@ export default function Mediation() {
                 </ul>
               </nav>
             </div>
+            ?
             <Separator className="order-2 mt-8 mb-11 lg:hidden" />
             <div className="order-1 flex flex-col gap-2 lg:order-none lg:mt-9">
               <p className="font-medium text-muted-foreground">

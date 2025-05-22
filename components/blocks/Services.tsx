@@ -17,7 +17,7 @@ const features = [
     description:
       "We help individuals, families and organizations navigate conflict with respect and understanding, creating space for open dialogue and mutual solutions.",
     href: "#",
-    image: "https://shadcnblocks.com/images/block/placeholder-1.svg",
+    image: "/images/photos/vertical/community-mediation-2.jpg",
   },
   {
     id: "Feature 2",
@@ -25,7 +25,7 @@ const features = [
     description:
       "Through restorative practices, we bring together those who have caused harm and those who have been harmed to rebuild trust and repair relationships",
     href: "#",
-    image: "https://shadcnblocks.com/images/block/placeholder-1.svg",
+    image: "/images/photos/vertical/restorative-programs.jpg",
   },
   {
     id: "Re-entry Mediation",
@@ -33,7 +33,7 @@ const features = [
     description:
       "We support individuals transitioning back into the community after incarceration by facilitating conversations that ease re-entry, rebuild relationships, and reduce recidivism.",
     href: "#",
-    image: "https://shadcnblocks.com/images/block/placeholder-2.svg",
+    image: "/images/photos/vertical/re-entry-mediation.jpg",
   },
   {
     id: "Group Facilitation",
@@ -41,7 +41,7 @@ const features = [
     description:
       "We guide groups through meaningful discussions, helping them find common ground, collaborate effectively, and make decisions that work for everyone involved.",
     href: "#",
-    image: "https://shadcnblocks.com/images/block/placeholder-3.svg",
+    image: "/images/photos/vertical/group-facilitation.jpg",
   },
   {
     id: "Training for Organizations",
@@ -49,7 +49,7 @@ const features = [
     description:
       "We offer conflict resolution and basic mediation training for organizations seeking to enhance their ability to manage conflict, foster understanding, and build healthier, more collaborative work environments.",
     href: "#",
-    image: "https://shadcnblocks.com/images/block/placeholder-3.svg",
+    image: "/images/photos/vertical/training-for-organizations.jpg",
   },
   {
     id: "Community Education",
@@ -57,7 +57,7 @@ const features = [
     description:
       "We provide accessible workshops, skill-building sessions, and practical tips that empower community members with the tools they need to resolve everyday conflicts and strengthen relationships.",
     href: "#",
-    image: "https://shadcnblocks.com/images/block/placeholder-3.svg",
+    image: "/images/photos/vertical/community-education.jpg",
   },
 ];
 
